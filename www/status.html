@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="css/main2.css" />
+	<meta charset="UTF-8">
+	<title>Uniqorn - Status</title>
+	<meta name="language" content="en">
+	<script type="text/javascript" src="js/status.js"></script>
+	<link rel="stylesheet" href="css/status.css" />
+</head>
+<body>
+	<header>
+		<a href="/"><img src="assets/unicorn.png" alt="Uniqorn" /></a>
+		<p><a href="/">Uniqorn</a></p>
+		<p>Serverless Java REST API</p>
+	</header>
+	<main>
+		<h1>Status Page</h1>
+		<h2>System Availability</h2>
+		<div id="uptime"></div>
+		
+		<h2>Incidents</h2>
+		<div id="incidents"></div>
+		
+		<script type="text/javascript">
+			fetchUptime();
+			fetchIncidents();
+		</script>
+	</main>
+	<footer>
+		<a href="legal">Legal</a> - <a href="privacy">Privacy</a> - <a href="status">Status</a> - <a href="roadmap">Roadmap</a>
+		<p>&copy; Uniqorn 2025</p>
+	</footer>
+</body>
+</html>

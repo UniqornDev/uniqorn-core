@@ -24,7 +24,6 @@ body {
 	background-size: cover;
 	background-attachment: fixed;
 	text-align: center;
-	background-attachment: fixed;
 	overflow-x: hidden;
 }
 h1, h2, h3 { margin: 0; font-family: title; font-weight: 300; }
@@ -91,8 +90,10 @@ aside button { border: 0; padding: 0.5rem 1.5rem; border-radius: 2rem; margin: 0
 
 #result { text-align: center; }
 #result button.close { background-color: #d75d7f30; border: 2px solid var(--pink); }
+#result button.done { background-color: #99ac1b30; border: 2px solid var(--green); }
 
 section.sample { padding: 10rem 2rem; }
+section.sample h2 { padding-bottom: 2rem; }
 section.sample > div { max-width: 60vw; margin: 0 auto; padding: 3rem; background-color: var(--white); box-shadow: 1rem 1rem 1rem #0008; }
 section.sample .codewrap { overflow: auto; border: 1px solid #8888; display: grid; grid-template-columns: 1fr; }
 section.sample .disabled { cursor: not-allowed; opacity: 0.7; }
@@ -120,12 +121,11 @@ ul.box em::before {
 	background-color: #ecb1c6; z-index: -1;
 }
 
-section.plans { padding: 5rem; }
-section.plans > p { text-align: right; }
+section.plans { padding: 2rem; }
+section.plans > div { width: 72rem; max-width: 85rem; min-width: 50rem; margin: 0 auto; padding: 3rem; background-color: var(--white); box-shadow: 1rem 1rem 1rem #0008; }
+section.plans > div > h2 { padding-bottom: 3rem; }
 
-table { margin: 0 auto; border-spacing: 0.5rem 0; width: 85vw; background-color: #fffd; padding: 2rem;
-	box-shadow: 1rem 1rem 1rem #0008;
-}
+table { border-spacing: 0.5rem 0; }
 table th { font-weight: 300; font-size: 1.3em; }
 table th span { display: block; font-style: italic; }
 table td, table th { padding: 0.8rem; width: 20%; }

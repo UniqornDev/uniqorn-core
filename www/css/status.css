@@ -1,0 +1,36 @@
+
+#uptime { }
+#uptime .entry { padding: 2rem 1rem; min-width: 600px; max-width: 900px; margin-left: 5rem; position: relative; }
+#uptime .entry h3 { margin: 1rem 0; }
+#uptime .entry .bars { width: 100%; height: 30px; margin: 0; padding: 0; overflow: hidden; }
+#uptime .entry .bars .n { fill: #0002; }
+#uptime .entry .bars .r { fill: #ef4146; }
+#uptime .entry .bars .o { fill: #f29f2d; }
+#uptime .entry .bars .g { fill: #10a37f; }
+
+#uptime .entry::before {
+	content: '90 days ago'; position: absolute; left: 1rem; bottom: 1rem; font-size: 0.8rem;
+	text-transform: uppercase; letter-spacing: 0.1rem; color: #0006;
+}
+#uptime .entry::after {
+	content: 'Today'; position: absolute; right: 1rem; bottom: 1rem; font-size: 0.8rem;
+	text-transform: uppercase; letter-spacing: 0.1rem; color: #0006;
+}
+
+#tooltip {
+	position: absolute; padding: 0.5rem 1rem; background-color: var(--white); transform: translateX(-50%); font-size: 0.8rem;
+	pointer-events: none; border: 1px solid #ccc; z-index: 10; width: 15rem; line-height: 1.5rem; color: #000a;
+}
+#tooltip em { font-style: normal; color: var(--blue); display: block; margin-bottom: 0.5rem; }
+
+#incidents { }
+#incidents h3 { border-bottom: 1px solid #0003; padding: 0.5rem; max-width: 900px; }
+#incidents p { font-size: 0.9rem; letter-spacing: 0.1rem; }
+#incidents p:not(.empty) { border-left: 2px solid #0006; padding: 0.5rem 1rem; line-height: 1.4rem; margin: 0.5rem 8rem; }
+#incidents p.empty { color: #0006; font-style: italic; }
+#incidents p .title { display: block; text-transform: uppercase; }
+#incidents p .title.ok { color: var(--green); } 
+#incidents p .title.warn { color: var(--yellow); }
+#incidents p .title.nok { color: var(--pink); }
+#incidents p .date { display: block; color: var(--blue); font-size: 0.8rem; }
+#incidents p .summary { display: block; color: #000a; }

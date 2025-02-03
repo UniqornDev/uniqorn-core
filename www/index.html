@@ -19,33 +19,26 @@
 	</header>
 	<main>
 		<section class="sample">
+			<a name="sample"></a>
 			<div>
+				<h2>Try it now</h2>
 				<script type="text/javascript">
 					codeInput.registerTemplate("syntax-highlighted", codeInput.templates.prism(Prism));
 				</script>
 				
 				<div class="codewrap">
-					<pre class="disabled"><code id="code_before" class="language-java">import aeonics.data.*;
-import aeonics.entity.*;
-import aeonics.http.*;
-import aeonics.template.*;
-import aeonics.manager.*;
-import aeonics.util.Functions.*;
+					<pre class="disabled"><code id="code_before" class="language-java">import uniqorn.*;
 
-public class Custom implements Supplier&lt;Entity&gt; {
-	public Entity get() {</code></pre><code-input language="Java" id="source">		AtomicInteger counter = new AtomicInteger(0);
-		return new Endpoint.Rest() { }
-			.add(new Parameter("name").format(Parameter.Format.TEXT))
+public class Custom implements Supplier&lt;Api&gt; {
+	public Api get() {</code></pre><code-input language="Java" id="source">		return new Api("/api/test", "GET")
+			.parameter("name")
 			.process(data -> {
-				return Data.map()
-					.put("hello", data.get("name"))
-					.put("counter", counter.incrementAndGet());
-			})</code-input><pre class="disabled"><code id="code_after" class="language-java">			.url("/api/test")
-			.method("GET");
-	}
+				return JSON.object()
+					.put("hello", data.get("name"));
+			});</code-input><pre class="disabled"><code id="code_after" class="language-java">	}
 }</code></pre>
 				</div>
-				<button onclick="event.preventDefault(); document.getElementById('consent').style.display = 'block';"><span>Publish now</span></button>
+				<button onclick="event.preventDefault(); document.getElementById('consent').style.display = 'block';"><span>Publish API</span></button>
 				<script type="text/javascript">
 					Prism.highlightElement(document.getElementById('code_before'));
 					Prism.highlightElement(document.getElementById('code_after'));
@@ -57,14 +50,14 @@ public class Custom implements Supplier&lt;Entity&gt; {
 			<ul class="box">
 				<li>
 					<h2>What is <em>Uniqorn</em>?</h2>
-					<p>A magically simple serverless Java REST API solution.</p>
+					<p>A radically simple way to publish Java REST APIs.</p>
 					<p>Drop a Java source file or an OpenAPI definition, and voilà: 
 					it’s instantly live as a REST endpoint.</p>
 					<p>No servers, no installations, no maintenance headaches. Just copy, paste, and deploy.</p>
 				</li>
 				<li>
 					<h2>Who is <em>Uniqorn</em> for?</h2>
-					<p>Developers juggling with complex systems but need something simple.</p>
+					<p>For developers who need simplicity in a world of complexity.</p>
 					<p>It's for those moments when spinning up yet another server, configuring middleware, and maintaining 
 					dependencies feels like swatting a fly with a sledgehammer.</p>
 				</li>
@@ -72,155 +65,166 @@ public class Custom implements Supplier&lt;Entity&gt; {
 					<h2>Why <em>Uniqorn</em>?</h2>
 					<p>Because time is precious, and servers are overkill for small jobs.</p>
 					<p>Because we're lazy. Because it works.</p>
-					<p>Easy to troubleshoot, less boilerplate, live immediately.</p>
+					<p>Less boilerplate, easier troubleshooting, and instant deployment.</p>
 				</li>
 			</ul>
 		</section>
 		
 		<section class="plans">
 			<a name="plans"></a>
-			<table>
-				<thead>
-					<tr>
-						<th></th>
-						<th class="a"><span>Trial</span></th>
-						<th class="a"><span>For you</span></th>
-						<th class="a"><span>Small teams</span></th>
-						<th class="a"><span>Larger teams</span></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td></td>
-						<td>14 days free</td>
-						<td>$5/mo</td>
-						<td>$75/mo</td>
-						<td>$599/mo</td>
-					</tr>
-					<tr>
-						<td>Number of users<span class="help" data-tooltip="The number of accounts that can collaborate in the same worspace"></span></td>
-						<td>1</td>
-						<td>1</td>
-						<td>10</td>
-						<td>Unlimited</td>
-					</tr>
-					<tr>
-						<td>Number of APIs<span class="help" data-tooltip="The number of APIs that can be deployed in the same workspace"></span></td>
-						<td>2</td>
-						<td>20</td>
-						<td>200</td>
-						<td>Unlimited</td>
-					</tr>
-					<tr>
-						<td>Rate limit<span class="help" data-tooltip="Number of hourly API calls for the entire workspace"></span></td>
-						<td>10/h</td>
-						<td>500/h</td>
-						<td>10,000/h</td>
-						<td>Unlimited</td>
-					</tr>
-					<tr>
-						<td>API keys<span class="help" data-tooltip="Secure your APIs with secure token keys"></span></td>
-						<td>1</td>
-						<td>50</td>
-						<td>Unlimited</td>
-						<td>Unlimited</td>
-					</tr>
-					<tr>
-						<td>Local storage<span class="help" data-tooltip="You can use a local storage to retain data"></span></td>
-						<td>0.1GB</td>
-						<td>2GB</td>
-						<td>50GB</td>
-						<td>140GB</td>
-					</tr>
-					<tr>
-						<td>Endpoint metrics<span class="help" data-tooltip="Follow API usage and health metrics"></span></td>
-						<td>&check;</td>
-						<td>&check;</td>
-						<td>&check;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>Live logging<span class="help" data-tooltip="View live debugging information about your APIs"></span></td>
-						<td>&times;</td>
-						<td>&check;</td>
-						<td>&check;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>Support<span class="help" data-tooltip="Ask questions"></span></td>
-						<td>Community</td>
-						<td>Community</td>
-						<td>Email</td>
-						<td>Phone</td>
-					</tr>
-					<tr>
-						<td>Dedicated environment<span class="help" data-tooltip="Your APIs are deployed on a dedicated machine"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&check;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>Custom subdomain<span class="help" data-tooltip="You can choose your subdomain for the URL of your API workspace"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&check;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>Custom DNS<span class="help" data-tooltip="You can attach your custom domain name to your API workspace"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>SSO integration<span class="help" data-tooltip="Connect to your enterprise identity provider for logins"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>CO2 reporting<span class="help" data-tooltip="Environmental KPIs related to each API"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>Simple</td>
-						<td>Complete</td>
-					</tr>
-					<tr>
-						<td>Cybersecurity insights<span class="help" data-tooltip="Automatic SBOM and intrusion reporting"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>Simple</td>
-						<td>Complete</td>
-					</tr>
-					<tr>
-						<td>AI assistant<span class="help" data-tooltip="Faster coding with a tailored AI assistant"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&check;</td>
-					</tr>
-					<tr>
-						<td>SLA<span class="help" data-tooltip="Guaranteed system uptime, garanteed incident response time"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>On-demand</td>
-					</tr>
-					<tr>
-						<td>On-premise<span class="help" data-tooltip="All yours, fully"></span></td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>&times;</td>
-						<td>On-demand</td>
-					</tr>
-				</tbody>
-			</table>
+			<div>
+				<h2>Our hassle-free plans</h2>
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th class="a"><span>Trial</span></th>
+							<th class="a"><span>For you</span></th>
+							<th class="a"><span>Small teams</span></th>
+							<th class="a"><span>Larger teams</span></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td>14 days free</td>
+							<td>$5/mo</td>
+							<td>$75/mo</td>
+							<td>$599/mo</td>
+						</tr>
+						<tr>
+							<td>Number of users<span class="help" data-tooltip="The number of accounts that can collaborate in the same worspace"></span></td>
+							<td>1</td>
+							<td>1</td>
+							<td>10</td>
+							<td>Unlimited</td>
+						</tr>
+						<tr>
+							<td>Number of APIs<span class="help" data-tooltip="The number of APIs that can be deployed in the same workspace"></span></td>
+							<td>2</td>
+							<td>20</td>
+							<td>200</td>
+							<td>Unlimited</td>
+						</tr>
+						<tr>
+							<td>Rate limit<span class="help" data-tooltip="Number of hourly API calls for the entire workspace"></span></td>
+							<td>10/h</td>
+							<td>500/h</td>
+							<td>10,000/h</td>
+							<td>Unlimited</td>
+						</tr>
+						<tr>
+							<td>API keys<span class="help" data-tooltip="Secure your APIs with secure token keys"></span></td>
+							<td>1</td>
+							<td>50</td>
+							<td>Unlimited</td>
+							<td>Unlimited</td>
+						</tr>
+						<tr>
+							<td>Local storage<span class="help" data-tooltip="You can use a local storage to retain data"></span></td>
+							<td>0.1GB</td>
+							<td>2GB</td>
+							<td>50GB</td>
+							<td>140GB</td>
+						</tr>
+						<tr>
+							<td>CI/CD Automation<span class="help" data-tooltip="You can use our APIs to publish yours"></span></td>
+							<td>&check;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>Endpoint metrics<span class="help" data-tooltip="Follow API usage and health metrics"></span></td>
+							<td>&check;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>Live logging<span class="help" data-tooltip="View live debugging information about your APIs"></span></td>
+							<td>&times;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>Support<span class="help" data-tooltip="Ask questions"></span></td>
+							<td>Community</td>
+							<td>Community</td>
+							<td>Email</td>
+							<td>Phone</td>
+						</tr>
+						<tr>
+							<td>Dedicated environment<span class="help" data-tooltip="Your APIs are deployed on a dedicated machine"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>Custom subdomain<span class="help" data-tooltip="You can choose your subdomain for the URL of your API workspace"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&check;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>Custom DNS<span class="help" data-tooltip="You can attach your custom domain name to your API workspace"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>SSO integration<span class="help" data-tooltip="Connect to your enterprise identity provider for logins"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>CO2 reporting<span class="help" data-tooltip="Environmental KPIs related to each API"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>Simple</td>
+							<td>Complete</td>
+						</tr>
+						<tr>
+							<td>Cybersecurity insights<span class="help" data-tooltip="Automatic SBOM and intrusion reporting"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>Simple</td>
+							<td>Complete</td>
+						</tr>
+						<tr>
+							<td>AI assistant<span class="help" data-tooltip="Faster coding with a tailored AI assistant"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&check;</td>
+						</tr>
+						<tr>
+							<td>SLA<span class="help" data-tooltip="Guaranteed system uptime, garanteed incident response time"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>On-demand</td>
+						</tr>
+						<tr>
+							<td>On-premise<span class="help" data-tooltip="All yours, fully"></span></td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>&times;</td>
+							<td>On-demand</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</section>
 		
 		<section class="faq">
+			<a name="faq"></a>
 			<h2>Frequently Asked Questions</h2>
 			<ul class="faq">
 				<li>
@@ -229,11 +233,29 @@ public class Custom implements Supplier&lt;Entity&gt; {
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Why not Tomcat, Spring, Quarkus, or Helidon ?</h2>
-					<p>These frameworks are great if you're building something complex, but they weren’t designed with REST APIs as their primary focus. As a result, they come with unnecessary overhead, require code generation, and rely on reflection—adding complexity, slowing things down, and making it harder to track dependencies.<br /><br />Uniqorn eliminates the bloat and focuses entirely on making REST APIs fast, lightweight, and painless to deploy.</p>
+					<p>These frameworks are great if you're building something complex, but they weren’t designed with REST APIs as their primary focus. As a result, they come with unnecessary overhead, require intermediate code generation, and rely on reflection—adding complexity, slowing things down, and making it harder to track dependencies.<br /><br />Uniqorn eliminates the bloat and focuses entirely on making REST APIs fast, lightweight, and painless to deploy.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use another framework or library ?</h2>
 					<p>Not with the online version. Uniqorn is designed to work as a standalone solution, ensuring simplicity and minimal dependencies.<br /><br />Yes, if you're using the on-premise version, you then have full control and can integrate additional frameworks or libraries as needed. It’s your playground in that environment.</p>
+				</li>
+				<li>
+					<h2 onclick="this.parentNode.classList.toggle('open');">What if I am missing a feature ?</h2>
+					<p>We keep the framework minimal to avoid hideous code-obese monstrosities that try to do everything and end up doing 
+					nothing well. Instead, we focus on providing essential tools and helper methods that cover common use cases.<br /><br />
+					That said, if you feel like something important is missing, let us know and we will work it out.</p>
+				</li>
+				<li>
+					<h2 onclick="this.parentNode.classList.toggle('open');">Where can I store my data ?</h2>
+					<p>Your data stays yours—Unicorn doesn’t host a database for you. Instead, it provides a simple way to connect to 
+					your preferred data store, whether SQL, NoSQL, or an object store. You can manage these connections directly from 
+					the interface and choose from supported vendors.<br /><br />Each plan also includes persistent disk space, which 
+					you can use in the same way for lightweight storage needs. This gives you flexibility while keeping Unicorn lean 
+					and focused on APIs, not database management.</p>
+				</li>
+				<li>
+					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use CI/CD to deploy my APIs ?</h2>
+					<p>Yes, Uniqorn supports CI/CD workflows out of the box. You can leverage our own APIs to deploy your APIs, making it easy to integrate into your existing automation pipeline. It’s a seamless way to stay agile and efficient.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use it for production APIs ?</h2>
@@ -242,10 +264,6 @@ public class Custom implements Supplier&lt;Entity&gt; {
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">What happens when I reach my plan limits ?</h2>
 					<p>If you exceed your plan’s limits, the API will return a standard HTTP 429 (Too Many Requests) error. This ensures smooth handling without any unexpected downtime. We also recommend monitoring your usage so you can upgrade before limits impact your operations.<br /><br />If you need higher limits, bring it to us and we will find a solution together.</p>
-				</li>
-				<li>
-					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use CI/CD to deploy my APIs ?</h2>
-					<p>Yes, Uniqorn supports CI/CD workflows out of the box. You can leverage our own APIs to deploy your APIs, making it easy to integrate into your existing automation pipeline. It’s a seamless way to stay agile and efficient.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Is it secure ?</h2>
@@ -259,7 +277,7 @@ public class Custom implements Supplier&lt;Entity&gt; {
 		</section>
 	</main>
 	<footer>
-		<a href="">Legal</a> - <a href="">Privacy</a>
+		<a href="legal">Legal</a> - <a href="privacy">Privacy</a> - <a href="status">Status</a> - <a href="roadmap">Roadmap</a>
 		<p>&copy; Uniqorn 2025</p>
 	</footer>
 	<aside id="consent" style="display: none;">
@@ -267,7 +285,7 @@ public class Custom implements Supplier&lt;Entity&gt; {
 			<h2>Legal Consent</h2>
 			<p>By deploying code on our servers, you acknowledge and agree to the following:</p>
 			<ol>
-				<li><strong>Privacy Notice</strong>: The code you provide will be processed and deployed according to our <a href="">Privacy Policy</a>.</li>
+				<li><strong>Privacy Notice</strong>: The code you provide will be processed and deployed according to our <a href="privacy" target="_blank">Privacy Policy</a>.</li>
 				<li><strong>Usage Limits</strong>: Each endpoint will be active for a maximum of <em>10 minutes</em> or <em>10 requests</em>, 
 					whichever occurs first. 
 					After this limit, the endpoint will be automatically destroyed. 

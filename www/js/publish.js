@@ -18,7 +18,7 @@ function publish()
 		{
 			if( json.error )
 			{
-				throw new Error(json.error);
+				throw new Error(json.error.message);
 			}
 			else if( json.url )
 			{
@@ -28,17 +28,22 @@ function publish()
 				r.append(h2);
 				const p = document.createElement('P');
 				p.className = 'success';
-				p.textContent = "Your endpoint is ready. We created a unique URL: ";
+				p.innerHTML = "Your endpoint is ready. To avoid name clash, we created a unique URL:<br /><br />";
 				r.append(p);
 				const a = document.createElement('A');
 				a.href = json.url;
+				a.target = '_blank';
 				a.textContent = json.url;
 				p.append(a);
+				const b = document.createElement('BUTTON');
+				b.className = 'done';
+				b.textContent = "Done";
+				b.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('result').style.display = 'none'; });
+				r.append(b);
 			}
 		})
 		.catch(error =>
 		{
-			debugger;
 			while(r.firstChild) r.firstChild.remove();
 			const h2 = document.createElement('H2');
 			h2.textContent = "Error";

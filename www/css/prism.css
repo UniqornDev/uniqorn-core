@@ -9,7 +9,7 @@ code[class*=language-]{max-height:inherit;height:inherit;padding:0 calc(1em - 10
 .token.punctuation{color:#5f6364}
 .token.boolean,.token.constant,.token.deleted,.token.function-name,.token.number,.token.property,.token.symbol,.token.tag{color:#c92c2c}
 .token.attr-name,.token.builtin,.token.char,.token.function,.token.inserted,.token.selector{color:#2f9c0a}
-.token.entity,.token.operator,.token.url,.token.variable{color:#a67f59;background:rgba(255,255,255,.5)}
+.token.entity,.token.operator,.token.url,.token.variable{color:#a67f59}
 .token.atrule,.token.attr-value,.token.class-name{color:#1990b8}
 .token.keyword{color:#d75d7f}
 .token.important,.token.regex{color:#e90}
