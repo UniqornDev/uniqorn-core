@@ -4,15 +4,23 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import aeonics.data.*;
 import aeonics.entity.security.User;
 import aeonics.http.*;
+import aeonics.manager.Executor;
+import aeonics.manager.Logger;
+import aeonics.manager.Manager;
+import aeonics.manager.Monitor;
 import aeonics.template.Parameter;
 import aeonics.entity.*;
 import aeonics.util.Functions.BiFunction;
 import aeonics.util.Functions.Function;
 import aeonics.util.Functions.Predicate;
+import aeonics.util.Functions.Runnable;
+import aeonics.util.Functions.Supplier;
 import aeonics.util.Tuples.Tuple;
 import aeonics.util.StringUtils;
 
@@ -25,6 +33,8 @@ public class Api extends Entity
 	private final Set<String> deniedRoles = new HashSet<>();
 	private final Set<String> deniedGroups = new HashSet<>();
 	private final Set<String> deniedUsers = new HashSet<>();
+	private final AtomicInteger concurrency = new AtomicInteger(-1);
+	private final AtomicInteger active = new AtomicInteger(0);
 	
 	private void securityCheck(Data data, User.Type user)
 	{
@@ -40,19 +50,19 @@ public class Api extends Entity
 			if( role != null && !role.isBlank() && user.hasRole(role) )
 				throw new HttpException(403, "Access denied");
 		
-		for( String group : deniedGroups )
-			if( group != null && !group.isBlank() && user.isMemberOf(group) )
-				throw new HttpException(403, "Access denied");
-		
 		for( String role : allowedRoles )
 			if( role != null && !role.isBlank() && user.hasRole(role) )
 				return;
+		
+		for( String group : deniedGroups )
+			if( group != null && !group.isBlank() && user.isMemberOf(group) )
+				throw new HttpException(403, "Access denied");
 		
 		for( String group : allowedGroups )
 			if( group != null && !group.isBlank() && user.isMemberOf(group) )
 				return;
 		
-		if( !allowedRoles.isEmpty() || !allowedGroups.isEmpty() )
+		if( !allowedUsers.isEmpty() || !allowedRoles.isEmpty() || !allowedGroups.isEmpty() )
 			throw new HttpException(403, "Access denied");
 	}
 	
@@ -93,18 +103,99 @@ public class Api extends Entity
 	{
 		throw new HttpException(code, data);
 	}
+
+	public static Data chain(String url) throws Exception { return chain(url, "GET", Data.map(), User.SYSTEM); }
+	
+	public static Data chain(String url, String method) throws Exception { return chain(url, method, Data.map(), User.SYSTEM); }
+	
+	public static Data chain(String url, String method, Data data) throws Exception { return chain(url, method, data, User.SYSTEM); }
+	
+	public static Data chain(String url, String method, Data data, User.Type user) throws Exception
+	{
+		Endpoint.Rest.Type endpoint = Registry.of(Endpoint.class).get(e -> e.method().equals(method) && e.matches(url));
+		if( endpoint == null ) throw new HttpException(404);
+		return endpoint.process(data, user);
+	}
 	
 	public Api process(Function<Data, Object> handler)
 	{
 		if( handler == null ) throw new HttpException(413, "The endpoint process function is not valid");
-		api().process(handler);
+		
+		final Function<Data, Object> wrapper = (data) ->
+		{
+			try
+			{
+				State.api.set(api().id());
+				synchronized (this)
+				{
+		            while (concurrency.get() > 0 && active.get() >= concurrency.get())
+		                wait();
+		            active.incrementAndGet();
+		        }
+			
+	            return handler.apply(data);
+	        }
+			catch(HttpException he)
+			{
+				throw he;
+			}
+			catch(Exception x)
+			{
+				throw new HttpException(500, x.getMessage());
+			}
+			finally
+			{
+				State.api.set(null);
+	            synchronized (this)
+	            {
+	            	active.decrementAndGet();
+	                notifyAll();
+	            }
+	        }
+		};
+		
+		api().process(wrapper);
 		return this;
 	}
 	
 	public Api process(BiFunction<Data, User, Object> handler)
 	{
 		if( handler == null ) throw new HttpException(413, "The endpoint process function is not valid");
-		api().process(handler);
+		
+		final BiFunction<Data, User, Object> wrapper = (data, user) ->
+		{
+			try
+			{
+				State.api.set(api().id());
+				synchronized (this)
+				{
+		            while (concurrency.get() > 0 && active.get() >= concurrency.get())
+		                wait();
+		            active.incrementAndGet();
+		        }
+			
+	            return handler.apply(data, user);
+	        }
+			catch(HttpException he)
+			{
+				throw he;
+			}
+			catch(Exception x)
+			{
+				throw new HttpException(500, x);
+			}
+			finally
+			{
+				State.api.set(null);
+	            synchronized (this)
+	            {
+	            	active.decrementAndGet();
+	                notifyAll();
+	            }
+	        }
+		};
+		
+		api().process(wrapper);
 		return this;
 	}
 	
@@ -187,5 +278,62 @@ public class Api extends Entity
 		api().parameters().put(p.name(), Tuple.of(null, p));
 		
 		return this;
+	}
+	
+	public Api concurrency(int level)
+	{
+		concurrency.set(level);
+		return this;
+	}
+	
+	private static final ReentrantLock atomicLock = new ReentrantLock();
+	public static void atomic(Runnable operation) throws Exception
+	{
+		atomicLock.lock();
+		try { operation.run(); }
+		finally { atomicLock.unlock(); }
+	}
+	
+	public static <T> T atomic(Supplier<T> operation) throws Exception
+	{
+		atomicLock.lock();
+		try { return operation.get(); }
+		finally { atomicLock.unlock(); }
+	}
+	
+	public static void defer(Runnable operation)
+	{
+		Manager.of(Executor.class).normal(operation).or(e -> 
+		{
+			Manager.of(Logger.class).warning(Api.class, e);
+		});
+	}
+	
+	public static void log(int level, String message, Object...data)
+	{
+		Manager.of(Logger.class).log(level, Api.class, message, data);
+	}
+	
+	public static void log(int level, Exception error)
+	{
+		Manager.of(Logger.class).log(level, Api.class, error);
+	}
+	
+	public static void debug(String tag, Object...data)
+	{
+		if( data == null || data.length == 0 )
+			Debug.stacktrace(tag);
+		else
+			Debug.debug(tag, data);
+	}
+	
+	public static void metrics(String name)
+	{
+		Manager.of(Monitor.class).add("Uniqorn", "Api", Monitor.UNSPECIFIED, name, 0);
+	}
+	
+	public static void metrics(String name, long value)
+	{
+		Manager.of(Monitor.class).add("Uniqorn", "Api", Monitor.UNSPECIFIED, name, value);
 	}
 }

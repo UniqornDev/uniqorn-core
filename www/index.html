@@ -10,9 +10,22 @@
 	<script type="text/javascript" src="js/prism.js"></script>
 	<script type="text/javascript" src="js/code-input.min.js"></script>
 	<script type="text/javascript" src="js/publish.js"></script>
+<script>
+	if( location.hostname == "uniqorn.dev" ) {
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:5315836,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+	}
+</script>
 </head>
 <body>
 	<header>
+		<span class="brand">Uniqorn</span>
 		<img src="assets/unicorn.png" alt="Uniqorn" />
 		<h1>Supercali<em>java</em>listi<em>rest</em><em>api</em>docious</h1>
 		<p>Serverless Java REST API.<br />Nothing less.</p>
@@ -38,11 +51,12 @@ public class Custom implements Supplier&lt;Api&gt; {
 			});</code-input><pre class="disabled"><code id="code_after" class="language-java">	}
 }</code></pre>
 				</div>
-				<button onclick="event.preventDefault(); document.getElementById('consent').style.display = 'block';"><span>Publish API</span></button>
+				<button onclick="acquire(event);"><span>Publish API</span></button>
 				<script type="text/javascript">
 					Prism.highlightElement(document.getElementById('code_before'));
 					Prism.highlightElement(document.getElementById('code_after'));
 				</script>
+				<p><a href="doc">&gt; Documentation</a></p>
 			</div>
 		</section>
 		
@@ -52,7 +66,7 @@ public class Custom implements Supplier&lt;Api&gt; {
 					<h2>What is <em>Uniqorn</em>?</h2>
 					<p>A radically simple way to publish Java REST APIs.</p>
 					<p>Drop a Java source file or an OpenAPI definition, and voilà: 
-					it’s instantly live as a REST endpoint.</p>
+					it's instantly live as a REST endpoint.</p>
 					<p>No servers, no installations, no maintenance headaches. Just copy, paste, and deploy.</p>
 				</li>
 				<li>
@@ -68,6 +82,69 @@ public class Custom implements Supplier&lt;Api&gt; {
 					<p>Less boilerplate, easier troubleshooting, and instant deployment.</p>
 				</li>
 			</ul>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-120 -120 240 240">
+	<defs>
+		<linearGradient id="gradient">
+			<stop offset="15%" stop-color="#747caa" />
+			<stop offset="32%" stop-color="#99ac1b" />
+			<stop offset="50%" stop-color="#ebb100" />
+			<stop offset="68%" stop-color="#d86c39" />
+			<stop offset="85%" stop-color="#d75d7f" />
+		</linearGradient>
+		<mask id="mask">
+			<path d="M 3.14,-99.95 A 100,100 0 0,1 68.45,-72.89 L 69.34,-57.36 L 54.76,-58.31 A 80,80 0 0,0 2.51,-79.96 L 14.07,-88.89 Z" fill="black" stroke="white"></path>
+			<circle cx="39.59" cy="-80.82" r="20" fill="black" stroke="white"></circle>
+			<path d="M 72.89,-68.45 A 100,100 0 0,1 99.95,-3.14 L 89.60,8.46 L 79.96,-2.51 A 80,80 0 0,0 58.31,-54.76 L 72.81,-52.90 Z" fill="black" stroke="white"></path>
+			<circle cx="85.14" cy="-29.15" r="20" fill="black" stroke="white"></circle>
+			<path d="M 99.95,3.14 A 100,100 0 0,1 72.89,68.45 L 57.36,69.34 L 58.31,54.76 A 80,80 0 0,0 79.96,2.51 L 88.89,14.07 Z" fill="black" stroke="white"></path>
+			<circle cx="80.82" cy="39.59" r="20" fill="black" stroke="white"></circle>
+			<path d="M 68.45,72.89 A 100,100 0 0,1 3.14,99.95 L -8.46,89.60 L 2.51,79.96 A 80,80 0 0,0 54.76,58.31 L 52.90,72.81 Z" fill="black" stroke="white"></path>
+			<circle cx="29.15" cy="85.14" r="20" fill="black" stroke="white"></circle>
+			<path d="M -3.14,99.95 A 100,100 0 0,1 -68.45,72.89 L -69.34,57.36 L -54.76,58.31 A 80,80 0 0,0 -2.51,79.96 L -14.07,88.89 Z" fill="black" stroke="white"></path>
+			<circle cx="-39.59" cy="80.82" r="20" fill="black" stroke="white"></circle>
+			<path d="M -72.89,68.45 A 100,100 0 0,1 -99.95,3.14 L -89.60,-8.46 L -79.96,2.51 A 80,80 0 0,0 -58.31,54.76 L -72.81,52.90 Z" fill="black" stroke="white"></path>
+			<circle cx="-85.14" cy="29.15" r="20" fill="black" stroke="white"></circle>
+			<path d="M -99.95,-3.14 A 100,100 0 0,1 -72.89,-68.45 L -57.36,-69.34 L -58.31,-54.76 A 80,80 0 0,0 -79.96,-2.51 L -88.89,-14.07 Z" fill="black" stroke="white"></path>
+			<circle cx="-80.82" cy="-39.59" r="20" fill="black" stroke="white"></circle>
+			<path d="M -68.45,-72.89 A 100,100 0 0,1 -3.14,-99.95 L 8.46,-89.60 L -2.51,-79.96 A 80,80 0 0,0 -54.76,-58.31 L -52.90,-72.81 Z" fill="black" stroke="white"></path>
+			<circle cx="-29.15" cy="-85.14" r="20" fill="black" stroke="white"></circle>
+		</mask>
+	</defs>
+	<rect x="-120" y="-120" width="240" height="240" fill="url(#gradient)" mask="url(#mask)"/>
+	<text x="39.59" y="-80.82"   font-size="5" text-anchor="middle" dominant-baseline="middle">CODE</text>
+	<text x="85.14" y="-29.15"  font-size="5" text-anchor="middle" dominant-baseline="middle">BUILD</text>
+	<text x="80.82" y="39.59"    font-size="5" text-anchor="middle" dominant-baseline="middle">PACKAGE</text>
+	<text x="29.15" y="85.14"    font-size="5" text-anchor="middle" dominant-baseline="middle">CONTAINER</text>
+	<text x="-39.59" y="80.82"  font-size="5" text-anchor="middle" dominant-baseline="middle">PUBLISH</text>
+	<text x="-85.14" y="29.15"  font-size="5" text-anchor="middle" dominant-baseline="middle">DEPLOY</text>
+	<text x="-80.82" y="-39.59" font-size="5" text-anchor="middle" dominant-baseline="middle">RESTART</text>
+	<text x="-29.15" y="-85.14"  font-size="5" text-anchor="middle" dominant-baseline="middle">RUN</text>
+	<text x="0" y="0"  font-size="8" text-anchor="middle" dominant-baseline="middle" style="font-family: title;">The Nightmare Loop</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-120 -120 240 240">
+	<defs>
+		<linearGradient id="gradient2">
+			<stop offset="15%" stop-color="#747caa" />
+			<stop offset="32%" stop-color="#99ac1b" />
+			<stop offset="50%" stop-color="#ebb100" />
+			<stop offset="68%" stop-color="#d86c39" />
+			<stop offset="85%" stop-color="#d75d7f" />
+		</linearGradient>
+		<mask id="mask2">
+			<path d="M 3.14,-99.95 A 100,100 0 0,1 88.13,47.25 L 73.36,52.13 L 70.50,37.80 A 80,80 0 0,0 2.51,-79.96 L 14.07,-88.89 Z" fill="black" stroke="white"></path>
+			<circle cx="80.61" cy="-40.01" r="20" fill="black" stroke="white"></circle>
+			<path d="M 84.98,52.69 A 100,100 0 0,1 -84.98,52.69 L -81.83,37.46 L -67.99,42.15 A 80,80 0 0,0 67.99,42.15 L 69.94,56.63 Z" fill="black" stroke="white"></path>
+			<circle cx="-5.65" cy="89.82" r="20" fill="black" stroke="white"></circle>
+			<path d="M -88.13,47.25 A 100,100 0 0,1 -3.14,-99.95 L 8.46,-89.60 L -2.51,-79.96 A 80,80 0 0,0 -70.50,37.80 L -84.02,32.25 Z" fill="black" stroke="white"></path>
+			<circle cx="-74.96" cy="-49.80" r="20" fill="black" stroke="white"></circle>
+		</mask>
+	</defs>
+	<rect x="-120" y="-120" width="240" height="240" fill="url(#gradient2)" mask="url(#mask2)"/>
+	<text x="80.61" y="-40.01" font-size="5" text-anchor="middle" dominant-baseline="middle">CODE</text>
+	<text x="-5.65" y="89.82" font-size="5" text-anchor="middle" dominant-baseline="middle">PUBLISH</text>
+	<text x="-74.96" y="-49.80" font-size="5" text-anchor="middle" dominant-baseline="middle">RUN</text>
+	<text x="0" y="0"  font-size="8" text-anchor="middle" dominant-baseline="middle" style="font-family: title;">The Uniqorn Loop</text>
+</svg>
 		</section>
 		
 		<section class="plans">
@@ -79,35 +156,35 @@ public class Custom implements Supplier&lt;Api&gt; {
 						<tr>
 							<th></th>
 							<th class="a"><span>Trial</span></th>
-							<th class="a"><span>For you</span></th>
-							<th class="a"><span>Small teams</span></th>
-							<th class="a"><span>Larger teams</span></th>
+							<th class="a"><span>Personal</span></th>
+							<th class="a"><span>Team</span></th>
+							<th class="a"><span>Enterprise</span></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
 							<td></td>
-							<td>14 days free</td>
+							<td>Free</td>
 							<td>$5/mo</td>
 							<td>$75/mo</td>
 							<td>$599/mo</td>
 						</tr>
 						<tr>
-							<td>Number of users<span class="help" data-tooltip="The number of accounts that can collaborate in the same worspace"></span></td>
+							<td>Number of users<span class="help" data-tooltip="The number of accounts that can collaborate in the same instance"></span></td>
 							<td>1</td>
 							<td>1</td>
 							<td>10</td>
 							<td>Unlimited</td>
 						</tr>
 						<tr>
-							<td>Number of APIs<span class="help" data-tooltip="The number of APIs that can be deployed in the same workspace"></span></td>
+							<td>Number of APIs<span class="help" data-tooltip="The number of APIs that can be deployed in the same instance"></span></td>
 							<td>2</td>
 							<td>20</td>
 							<td>200</td>
 							<td>Unlimited</td>
 						</tr>
 						<tr>
-							<td>Rate limit<span class="help" data-tooltip="Number of hourly API calls for the entire workspace"></span></td>
+							<td>Rate limit<span class="help" data-tooltip="Number of hourly API calls for each endpoint"></span></td>
 							<td>10/h</td>
 							<td>500/h</td>
 							<td>10,000/h</td>
@@ -149,7 +226,7 @@ public class Custom implements Supplier&lt;Api&gt; {
 							<td>&check;</td>
 						</tr>
 						<tr>
-							<td>Support<span class="help" data-tooltip="Ask questions"></span></td>
+							<td>Support<span class="help" data-tooltip="Ask questions, get answers"></span></td>
 							<td>Community</td>
 							<td>Community</td>
 							<td>Email</td>
@@ -163,14 +240,14 @@ public class Custom implements Supplier&lt;Api&gt; {
 							<td>&check;</td>
 						</tr>
 						<tr>
-							<td>Custom subdomain<span class="help" data-tooltip="You can choose your subdomain for the URL of your API workspace"></span></td>
+							<td>Custom subdomain<span class="help" data-tooltip="You can choose your subdomain for the URL of your instance"></span></td>
 							<td>&times;</td>
 							<td>&times;</td>
 							<td>&check;</td>
 							<td>&check;</td>
 						</tr>
 						<tr>
-							<td>Custom DNS<span class="help" data-tooltip="You can attach your custom domain name to your API workspace"></span></td>
+							<td>Custom DNS<span class="help" data-tooltip="You can attach your custom domain name to your instance"></span></td>
 							<td>&times;</td>
 							<td>&times;</td>
 							<td>&times;</td>
@@ -218,6 +295,13 @@ public class Custom implements Supplier&lt;Api&gt; {
 							<td>&times;</td>
 							<td>On-demand</td>
 						</tr>
+						<tr>
+							<td></td>
+							<td><a href="contact">Contact us</a></td>
+							<td><a class="disabled" href="#">Soon</a></td>
+							<td><a class="disabled" href="#">Soon</a></td>
+							<td><a class="disabled" href="#">Soon</a></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -229,15 +313,15 @@ public class Custom implements Supplier&lt;Api&gt; {
 			<ul class="faq">
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Why Java and not .NET, PHP, Python or NodeJS ?</h2>
-					<p>Java is the backbone of many enterprise-grade applications for a reason: it is mature, secure, and built for reliability at scale.<br /><br />That said, we get it—Java has gained a reputation for overly complex frameworks, tangled spaghetti code, and compilation nightmares. Many developers associate it with unnecessary layers and painful workflows.<br /><br />With Uniqorn, there’s no need to wrangle frameworks, configure build pipelines, or deal with complicated encapsulation. Just drop a straightforward Java source file, and it’s instantly deployed. We bring Java back to its essence: powerful, efficient, and easy to use.</p>
+					<p>Java is the backbone of many enterprise-grade applications for a reason: it is mature, secure, and built for reliability at scale.<br /><br />That said, we get it, Java has gained a reputation for overly complex frameworks, tangled spaghetti code, and compilation nightmares. Many developers associate it with unnecessary layers and painful workflows.<br /><br />With Uniqorn, there's no need to wrangle frameworks, configure build pipelines, or deal with complicated encapsulation. Just drop a straightforward Java source file, and it's instantly deployed. We bring Java back to its essence: powerful, efficient, and easy to use.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Why not Tomcat, Spring, Quarkus, or Helidon ?</h2>
-					<p>These frameworks are great if you're building something complex, but they weren’t designed with REST APIs as their primary focus. As a result, they come with unnecessary overhead, require intermediate code generation, and rely on reflection—adding complexity, slowing things down, and making it harder to track dependencies.<br /><br />Uniqorn eliminates the bloat and focuses entirely on making REST APIs fast, lightweight, and painless to deploy.</p>
+					<p>These frameworks are great if you're building something complex, but they weren't designed with REST APIs as their primary focus. As a result, they come with unnecessary overhead, require intermediate code generation, and rely on reflection, adding complexity, slowing things down, and making it harder to track dependencies.<br /><br />Uniqorn eliminates the bloat and focuses entirely on making REST APIs fast, lightweight, and painless to deploy.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use another framework or library ?</h2>
-					<p>Not with the online version. Uniqorn is designed to work as a standalone solution, ensuring simplicity and minimal dependencies.<br /><br />Yes, if you're using the on-premise version, you then have full control and can integrate additional frameworks or libraries as needed. It’s your playground in that environment.</p>
+					<p>Not with the online version. Uniqorn is designed to work as a standalone solution, ensuring simplicity and minimal dependencies.<br /><br />Yes, if you're using the on-premise version, you then have full control and can integrate additional frameworks or libraries as needed. It's your playground in that environment.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">What if I am missing a feature ?</h2>
@@ -247,7 +331,7 @@ public class Custom implements Supplier&lt;Api&gt; {
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Where can I store my data ?</h2>
-					<p>Your data stays yours—Unicorn doesn’t host a database for you. Instead, it provides a simple way to connect to 
+					<p>Your data stays yours, Unicorn doesn't host a database for you. Instead, it provides a simple way to connect to 
 					your preferred data store, whether SQL, NoSQL, or an object store. You can manage these connections directly from 
 					the interface and choose from supported vendors.<br /><br />Each plan also includes persistent disk space, which 
 					you can use in the same way for lightweight storage needs. This gives you flexibility while keeping Unicorn lean 
@@ -255,30 +339,35 @@ public class Custom implements Supplier&lt;Api&gt; {
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use CI/CD to deploy my APIs ?</h2>
-					<p>Yes, Uniqorn supports CI/CD workflows out of the box. You can leverage our own APIs to deploy your APIs, making it easy to integrate into your existing automation pipeline. It’s a seamless way to stay agile and efficient.</p>
+					<p>Yes, Uniqorn supports CI/CD workflows out of the box. You can leverage our own APIs to deploy your APIs, making it easy to integrate into your existing automation pipeline. It's a seamless way to stay agile and efficient.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Can I use it for production APIs ?</h2>
-					<p>Absolutely! Uniqorn is production-ready, provided you’re on a plan with a dedicated environment (small or large teams plans). This ensures the stability and isolation required for critical production workloads, giving you the reliability and performance you need.</p>
+					<p>Absolutely! Uniqorn is production-ready, provided you're on a plan with a dedicated environment (team or enterprise plans). This ensures the stability and isolation required for critical production workloads, giving you the reliability and performance you need.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">What happens when I reach my plan limits ?</h2>
-					<p>If you exceed your plan’s limits, the API will return a standard HTTP 429 (Too Many Requests) error. This ensures smooth handling without any unexpected downtime. We also recommend monitoring your usage so you can upgrade before limits impact your operations.<br /><br />If you need higher limits, bring it to us and we will find a solution together.</p>
+					<p>If you exceed your plan's limits, the API will return a standard HTTP 429 (Too Many Requests) error. This ensures smooth handling without any unexpected downtime. We also recommend monitoring your usage so you can upgrade before limits impact your operations.<br /><br />If you need higher limits, bring it to us and we will find a solution together.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">Is it secure ?</h2>
-					<p>Yes, and we take security seriously. Uniqorn undergoes regular pentesting to ensure vulnerabilities are identified and mitigated before they can ever be exploited. The framework also covers top OWASP vulnerability classes out of the box, meaning your APIs are protected from the most common risks, such as injection attacks, cross-site scripting, and more.<br /><br /> That said, security is always a shared responsibility. Developers still need to follow best practices—managing sensitive data carefully, and configuring access controls appropriately. With Uniqorn’s minimized attack surface and built-in compliance features, you’ll start with a strong foundation to build secure, compliant APIs.</p>
+					<p>Yes, and we take security seriously. Uniqorn undergoes regular pentesting to ensure vulnerabilities are identified and mitigated before they can ever be exploited. The framework also covers top OWASP vulnerability classes out of the box, meaning your APIs are protected from the most common risks, such as injection attacks, cross-site scripting, and more.<br /><br /> That said, security is always a shared responsibility. Developers still need to follow best practices, managing sensitive data carefully, and configuring access controls appropriately. With Uniqorn's minimized attack surface and built-in compliance features, you'll start with a strong foundation to build secure, compliant APIs.</p>
 				</li>
 				<li>
 					<h2 onclick="this.parentNode.classList.toggle('open');">How does it scale ?</h2>
-					<p>Uniqorn takes a unique approach to scalability: instead of traditional horizontal scaling, it’s designed to be so lightweight and efficient that scaling often isn’t necessary. If you do hit a point where more computing power is required, reach out to us, and we’ll guide you to the best solution for your needs.</p>
+					<p>Uniqorn takes a unique approach to scalability: instead of traditional horizontal scaling, it's designed to be so lightweight and efficient that scaling often isn't necessary. However, if your workload demands more power, Uniqorn supports both vertical and strategic horizontal scaling. If you have specific scaling needs, we can help you implement the best approach for your use case.</p>
 				</li>
 			</ul>
 		</section>
 	</main>
 	<footer>
-		<a href="legal">Legal</a> - <a href="privacy">Privacy</a> - <a href="status">Status</a> - <a href="roadmap">Roadmap</a>
-		<p>&copy; Uniqorn 2025</p>
+		<a href="legal">Legal</a> 
+		- <a href="privacy">Privacy</a> 
+		- <a href="status">Status</a> 
+		- <a href="roadmap">Roadmap</a>
+		- <a href="doc">Documentation</a>
+		- <a href="contact">Contact</a>
+		<p>&copy; Uniqorn&trade; 2025</p>
 	</footer>
 	<aside id="consent" style="display: none;">
 		<div>
