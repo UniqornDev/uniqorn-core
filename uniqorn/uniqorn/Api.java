@@ -10,6 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import aeonics.data.*;
 import aeonics.entity.security.User;
 import aeonics.http.*;
+import aeonics.http.Endpoint;
+import aeonics.manager.Config;
 import aeonics.manager.Executor;
 import aeonics.manager.Logger;
 import aeonics.manager.Manager;
@@ -38,13 +40,15 @@ public class Api extends Entity
 	
 	private void securityCheck(Data data, User.Type user)
 	{
+		boolean allowed = false;
+		
 		for( String u : deniedUsers )
 			if( u != null && !u.isBlank() && (user.id().equalsIgnoreCase(u) || user.name().equalsIgnoreCase(u)) )
 				throw new HttpException(403, "Access denied");
 		
 		for( String u : allowedUsers )
 			if( u != null && !u.isBlank() && (user.id().equalsIgnoreCase(u) || user.name().equalsIgnoreCase(u)) )
-				return;
+				allowed = true;
 		
 		for( String role : deniedRoles )
 			if( role != null && !role.isBlank() && user.hasRole(role) )
@@ -52,7 +56,7 @@ public class Api extends Entity
 		
 		for( String role : allowedRoles )
 			if( role != null && !role.isBlank() && user.hasRole(role) )
-				return;
+				allowed = true;
 		
 		for( String group : deniedGroups )
 			if( group != null && !group.isBlank() && user.isMemberOf(group) )
@@ -60,10 +64,13 @@ public class Api extends Entity
 		
 		for( String group : allowedGroups )
 			if( group != null && !group.isBlank() && user.isMemberOf(group) )
-				return;
+				allowed = true;
 		
-		if( !allowedUsers.isEmpty() || !allowedRoles.isEmpty() || !allowedGroups.isEmpty() )
-			throw new HttpException(403, "Access denied");
+		// allow by default if there is no other allow
+		if( allowedUsers.isEmpty() && allowedRoles.isEmpty() && allowedGroups.isEmpty() )
+			allowed = true;
+		
+		if( !allowed ) throw new HttpException(403, "Access denied");
 	}
 	
 	public final SnapshotMode snapshotMode() { return SnapshotMode.NONE; }
@@ -82,6 +89,7 @@ public class Api extends Entity
 		if( method == null || method.isBlank() )
 			throw new HttpException(413, "The api method is invalid");
 		
+		// set the entity category
 		initialize(StringUtils.toLowerCase(Api.class), StringUtils.toLowerCase(Api.class), null, true);
 		api = new Endpoint.Rest() { }
 			.template()
@@ -112,7 +120,7 @@ public class Api extends Entity
 	
 	public static Data chain(String url, String method, Data data, User.Type user) throws Exception
 	{
-		Endpoint.Rest.Type endpoint = Registry.of(Endpoint.class).get(e -> e.method().equals(method) && e.matches(url));
+		Endpoint.Rest.Type endpoint = Registry.of(Endpoint.class).get(e -> e.matchesMethod(method) && e.matchesPath(url));
 		if( endpoint == null ) throw new HttpException(404);
 		return endpoint.process(data, user);
 	}
@@ -335,5 +343,10 @@ public class Api extends Entity
 	public static void metrics(String name, long value)
 	{
 		Manager.of(Monitor.class).add("Uniqorn", "Api", Monitor.UNSPECIFIED, name, value);
+	}
+	
+	public static Data env(String name)
+	{
+		return Manager.of(Config.class).get(Api.class, "env."+name);
 	}
 }
