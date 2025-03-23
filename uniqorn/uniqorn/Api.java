@@ -43,11 +43,11 @@ public class Api extends Entity
 		boolean allowed = false;
 		
 		for( String u : deniedUsers )
-			if( u != null && !u.isBlank() && (user.id().equalsIgnoreCase(u) || user.name().equalsIgnoreCase(u)) )
+			if( u != null && !u.isBlank() && (user.id().equalsIgnoreCase(u) || user.name().equalsIgnoreCase(u) || user.login().equalsIgnoreCase(u)) )
 				throw new HttpException(403, "Access denied");
 		
 		for( String u : allowedUsers )
-			if( u != null && !u.isBlank() && (user.id().equalsIgnoreCase(u) || user.name().equalsIgnoreCase(u)) )
+			if( u != null && !u.isBlank() && (user.id().equalsIgnoreCase(u) || user.name().equalsIgnoreCase(u) || user.login().equalsIgnoreCase(u)) )
 				allowed = true;
 		
 		for( String role : deniedRoles )
