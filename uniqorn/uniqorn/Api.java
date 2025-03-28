@@ -82,7 +82,7 @@ public class Api extends Entity
 			throw new HttpException(413, "The api URI is invalid");
 		
 		// normalize the path
-		path = Path.of(path).normalize().toString();
+		path = Path.of(path).normalize().toString().replace('\\', '/');
 		if( path.isBlank() || path.length() <= 1 )
 			throw new HttpException(413, "The api URI is invalid");
 		
@@ -98,6 +98,7 @@ public class Api extends Entity
 			.before(this::securityCheck)
 			.url(path)
 			.method(method);
+		api.internal(false);
 		Registry.of(Endpoint.class).remove(api);
 		Registry.add(this);
 	}

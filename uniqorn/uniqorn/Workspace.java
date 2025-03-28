@@ -45,7 +45,6 @@ public class Workspace extends Item<Workspace.Type>
 				.summary("Prefix")
 				.description("Optional url prefix for all endpoints in this workspace.")
 				.format(Parameter.Format.TEXT)
-				.rule(Parameter.Rule.PATH)
 				.optional(true)
 				.max(50)
 				.defaultValue(""))
