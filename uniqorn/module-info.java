@@ -5,6 +5,8 @@ module uniqorn
 	requires transitive aeonics.http;
 	
 	exports uniqorn;
+	exports uniqorn.storage;
+	exports uniqorn.database;
 	
 	provides aeonics.Plugin with local.Main;
 }

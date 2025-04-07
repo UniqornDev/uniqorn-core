@@ -1,12 +1,15 @@
 package uniqorn;
 
 import java.io.Closeable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 import aeonics.data.Data;
 import aeonics.entity.Entity;
 import aeonics.entity.Registry;
+import aeonics.http.HttpException;
 import aeonics.template.Factory;
 import aeonics.template.Item;
 import aeonics.template.Parameter;
@@ -150,11 +153,36 @@ public class Endpoint extends Item<Endpoint.Type>
 			api = Registry.of(StringUtils.toLowerCase(Api.class)).get(id);
 		}
 		
+		/**
+		 * Performs a sanity check on the code and throws an exception if it does not pass.
+		 * @param code the code
+		 * @throws HttpException if the code does not pass validation
+		 */
+		public static void checkCode(String code)
+		{
+			// sanity code check
+			for( String word : FORBIDDEN )
+				if( code.contains(word) )
+					throw new HttpException(400, "Use of restricted language features: " + word);
+		}
+		
 		private Api api = null;
 		public Api api() { return api; }
 		
 		private static final String IMPORTS = "import uniqorn.*; import aeonics.data.*; import aeonics.util.*; import java.util.*; import aeonics.entity.*; "
-			+ "import aeonics.manager.*; import aeonics.template.*; import aeonics.util.Functions.*; import java.util.concurrent.atomic.*;";
+			+ "import aeonics.template.*; import aeonics.util.Functions.*; import java.util.concurrent.atomic.*; "
+			+ "import aeonics.entity.security.*; ";
+		
+		private static final List<String> FORBIDDEN = Arrays.asList(
+			"reflect", "Method", "Field", "Constructor", "Modifier", "AccessibleObject", "InvocationHandler", "Proxy", "Class", "ClassLoader", "Unsafe", "ServiceLoader", "Module", "com.sun", "Native", "JNI", "MXBean", "SecurityManager", "Permission", "InitialContext", "JNDI", "RMI", "AccessController", "Instrumentation", "MethodHandle", "jdk",
+			"Runtime", "Shutdown", "ShutdownHook", "ProcessBuilder", "ProcessHandle", "System",
+			"File", "Files", "Path", "Paths", "FileSystem", "RandomAccessFile", "Console", "InputStream", "OutputStream",
+			"Thread", "ThreadLocal", "Executor", "Executors", "Callable", "Future", "ForkJoinPool", "Semaphore", "Mutex", "ReentrantLock", "Lock", "Condition", "CyclicBarrier", "CountDownLatch",
+			"Socket", "Datagram", "Multicast", "Channel", "URL", "URI",
+			"ScriptEngine", "Interpreter", "GroovyShell", "JavaScript", "JavaCompiler", "ToolProvider", "FileManager",
+			"Serializable", "Externalizable", "readObject", "writeObject", "resolveClass",
+			"goto", "invoke", "eval",
+			".jit", "Registry", "Factory", "Manager", ".manager", "Item", "Entity", "Template");
 	}
 	
 	protected Class<? extends Endpoint.Type> defaultTarget() { return Endpoint.Type.class; }

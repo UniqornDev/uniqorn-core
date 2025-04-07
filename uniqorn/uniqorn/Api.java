@@ -16,6 +16,7 @@ import aeonics.manager.Executor;
 import aeonics.manager.Logger;
 import aeonics.manager.Manager;
 import aeonics.manager.Monitor;
+import aeonics.template.Factory;
 import aeonics.template.Parameter;
 import aeonics.entity.*;
 import aeonics.util.Functions.BiFunction;
@@ -29,6 +30,8 @@ import aeonics.util.StringUtils;
 public class Api extends Entity
 {
 	private final Endpoint.Rest.Type api;
+	private final Endpoint.Template template;
+	
 	private final Set<String> allowedRoles = new HashSet<>();
 	private final Set<String> allowedGroups = new HashSet<>();
 	private final Set<String> allowedUsers = new HashSet<>();
@@ -75,6 +78,7 @@ public class Api extends Entity
 	
 	public final SnapshotMode snapshotMode() { return SnapshotMode.NONE; }
 	public final Endpoint.Rest.Type api() { return api; }
+	public final Endpoint.Template apitemplate() { return template; }
 	
 	public Api(String path, String method)
 	{
@@ -82,7 +86,7 @@ public class Api extends Entity
 			throw new HttpException(413, "The api URI is invalid");
 		
 		// normalize the path
-		path = Path.of(path).normalize().toString().replace('\\', '/');
+		path = Path.of("/" + path).normalize().toString().replace('\\', '/');
 		if( path.isBlank() || path.length() <= 1 )
 			throw new HttpException(413, "The api URI is invalid");
 		
@@ -91,9 +95,11 @@ public class Api extends Entity
 		
 		// set the entity category
 		initialize(StringUtils.toLowerCase(Api.class), StringUtils.toLowerCase(Api.class), null, true);
-		api = new Endpoint.Rest() { }
-			.template()
-			.create()
+		template = new Endpoint.Rest() { }
+			.template();
+		Factory.of(Endpoint.class).remove(template.type());
+		
+		api = template.create()
 			.<Endpoint.Rest.Type>cast()
 			.before(this::securityCheck)
 			.url(path)
@@ -121,6 +127,9 @@ public class Api extends Entity
 	
 	public static Data chain(String url, String method, Data data, User.Type user) throws Exception
 	{
+		if( !url.startsWith(Manager.of(Config.class).get(Api.class, "prefix").asString()) )
+			throw new HttpException(404);
+		
 		Endpoint.Rest.Type endpoint = Registry.of(Endpoint.class).get(e -> e.matchesMethod(method) && e.matchesPath(url));
 		if( endpoint == null ) throw new HttpException(404);
 		return endpoint.process(data, user);
@@ -150,6 +159,7 @@ public class Api extends Entity
 			}
 			catch(Exception x)
 			{
+				Manager.of(Logger.class).log(Logger.INFO, Api.class, x);
 				throw new HttpException(500, x.getMessage());
 			}
 			finally
@@ -167,11 +177,11 @@ public class Api extends Entity
 		return this;
 	}
 	
-	public Api process(BiFunction<Data, User, Object> handler)
+	public Api process(BiFunction<Data, User.Type, Object> handler)
 	{
 		if( handler == null ) throw new HttpException(413, "The endpoint process function is not valid");
 		
-		final BiFunction<Data, User, Object> wrapper = (data, user) ->
+		final BiFunction<Data, User.Type, Object> wrapper = (data, user) ->
 		{
 			try
 			{
@@ -191,6 +201,7 @@ public class Api extends Entity
 			}
 			catch(Exception x)
 			{
+				Manager.of(Logger.class).log(Logger.INFO, Api.class, x);
 				throw new HttpException(500, x);
 			}
 			finally
@@ -210,19 +221,19 @@ public class Api extends Entity
 	
 	public Api summary(String value)
 	{
-		api().template().summary(value);
+		apitemplate().summary(value);
 		return this;
 	}
 	
 	public Api description(String value)
 	{
-		api().template().description(value);
+		apitemplate().description(value);
 		return this;
 	}
 	
 	public Api returns(String value)
 	{
-		api().template().<Endpoint.Template>cast().returns(value); 
+		apitemplate().returns(value); 
 		return this;
 	}
 	
@@ -280,7 +291,7 @@ public class Api extends Entity
 		Parameter p = new Parameter(name).optional(true);
 		if( validator != null )
 			p.validator(validator);
-		api().template().add(p);
+		apitemplate().add(p);
 		
 		// caution: since the instance is created before the parameter is added to the template
 		// then we need to manually add the parameter to the instance too
@@ -349,5 +360,23 @@ public class Api extends Entity
 	public static Data env(String name)
 	{
 		return Manager.of(Config.class).get(Api.class, "env."+name);
+	}
+	
+	public static Storage.Type storage(String name)
+	{
+		return Registry.of(Storage.class).get(s ->
+		{
+			if( !s.type().startsWith("uniqorn.storage.") ) return false;
+			return s.name().equals(name);
+		});
+	}
+	
+	public static Database.Type database(String name)
+	{
+		return Registry.of(Database.class).get(d ->
+		{
+			if( !d.type().startsWith("uniqorn.database.") ) return false;
+			return d.name().equals(name);
+		});
 	}
 }
