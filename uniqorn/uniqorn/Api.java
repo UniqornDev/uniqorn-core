@@ -144,6 +144,16 @@ public class Api extends Entity
 	{
 		throw new HttpException(code, data);
 	}
+	
+	/**
+	 * Raises an error with the specified HTTP status code and detailed info from the original error
+	 * @param code the HTTP error code
+	 * @param error the root cause error
+	 */
+	public static void error(int code, Exception error)
+	{
+		throw new HttpException(code, error);
+	}
 
 	/**
 	 * Call another endpoint using the GET method
@@ -544,7 +554,7 @@ public class Api extends Entity
 	 */
 	public static Data env(String name)
 	{
-		return Manager.of(Config.class).get(Api.class, "env."+name);
+		return Manager.of(Config.class).get(Api.class, "env." + name);
 	}
 	
 	/**

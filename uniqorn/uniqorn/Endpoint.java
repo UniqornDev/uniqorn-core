@@ -117,6 +117,16 @@ public class Endpoint extends Item<Endpoint.Type>
 		}
 		
 		/**
+		 * Recompile the current head version if one is set.
+		 */
+		public synchronized void updateHead() throws Exception
+		{
+			Entity head = firstRelation("head");
+			if( head != null )
+				updateHead(head.valueOf("code").asString());
+		}
+		
+		/**
 		 * Update, the head version and attempt a compile.
 		 * The head is only updated if compilation succeeds.
 		 * @param code the code
@@ -151,6 +161,10 @@ public class Endpoint extends Item<Endpoint.Type>
 			if( api != null )
 				Registry.of(StringUtils.toLowerCase(Api.class)).remove(api.id());
 			api = Registry.of(StringUtils.toLowerCase(Api.class)).get(id);
+			
+			// ======================
+			// THEN CLEANUP THE DYNAMIC
+			Registry.of("aeonics.jit.dynamic").remove(result.asString("id"));
 		}
 		
 		/**

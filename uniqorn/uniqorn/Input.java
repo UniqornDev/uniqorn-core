@@ -16,6 +16,11 @@ public class Input
 		return data == null || data.isEmpty();
 	};
 	
+	public static final Predicate<Data> isAlphaNumeric = (data) ->
+	{
+		return data != null && StringUtils.isAlphaNum(data.asString());
+	};
+	
 	public static final Predicate<Data> isBoolean = (data) ->
 	{
 		return data != null && StringUtils.isBoolean(data.asString());
