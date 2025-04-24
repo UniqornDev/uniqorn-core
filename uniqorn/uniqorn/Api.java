@@ -45,6 +45,8 @@ public class Api extends Entity
 	
 	private void securityCheck(Data data, User.Type user)
 	{
+		if( user == User.SYSTEM ) return;
+		
 		boolean allowed = false;
 		
 		for( String u : deniedUsers )
@@ -123,6 +125,15 @@ public class Api extends Entity
 		api.internal(false);
 		Registry.of(Endpoint.class).remove(api);
 		Registry.add(this);
+	}
+	
+	/**
+	 * Raises an error with the specified HTTP status code and an empty message
+	 * @param code the HTTP error code
+	 */
+	public static void error(int code)
+	{
+		throw new HttpException(code);
 	}
 	
 	/**
