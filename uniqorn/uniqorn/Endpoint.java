@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import aeonics.data.Data;
 import aeonics.entity.Entity;
@@ -139,7 +140,9 @@ public class Endpoint extends Item<Endpoint.Type>
 			if( jit == null )
 				throw new IllegalStateException("Publishing is not possible at this time");
 			
-			Data result = jit.<aeonics.http.Endpoint.Rest.Type>cast().process(Data.map().put("code", IMPORTS + code));
+			// we need to strip the package declaration and prefix the imports
+			String sanitizedCode = IMPORTS + PACKAGE.matcher(code).replaceFirst("");
+			Data result = jit.<aeonics.http.Endpoint.Rest.Type>cast().process(Data.map().put("code", sanitizedCode));
 			String id = result.asString("entity_id");
 			
 			// ======================
@@ -197,6 +200,8 @@ public class Endpoint extends Item<Endpoint.Type>
 			"Serializable", "Externalizable", "readObject", "writeObject", "resolveClass",
 			"goto", "invoke", "eval",
 			".jit", "Registry", "Factory", "Manager", ".manager", "Item", "Entity", "Template");
+		
+		private static final Pattern PACKAGE = Pattern.compile("\\bpackage[\\w\\.\\s]*;", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	}
 	
 	protected Class<? extends Endpoint.Type> defaultTarget() { return Endpoint.Type.class; }
