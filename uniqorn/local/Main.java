@@ -29,6 +29,7 @@ public class Main extends Plugin
 		Factory.add(new Version());
 		Factory.add(new Endpoint());
 		Factory.add(new uniqorn.storage.File());
+		Factory.add(new uniqorn.storage.AWS());
 		Factory.add(new uniqorn.database.Mariadb());
 		Factory.add(new uniqorn.database.Pgsql());
 	}
