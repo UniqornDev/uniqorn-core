@@ -4,12 +4,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import aeonics.data.*;
 import aeonics.entity.security.User;
 import aeonics.http.*;
-import aeonics.http.Endpoint;
 import aeonics.manager.Config;
 import aeonics.manager.Executor;
 import aeonics.manager.Logger;
@@ -31,8 +31,8 @@ import aeonics.util.StringUtils;
  */
 public class Api extends Entity
 {
-	private final Endpoint.Rest.Type api;
-	private final Endpoint.Template template;
+	private final aeonics.http.Endpoint.Rest.Type api;
+	private final aeonics.http.Endpoint.Template template;
 	
 	private final Set<String> allowedRoles = new HashSet<>();
 	private final Set<String> allowedGroups = new HashSet<>();
@@ -42,6 +42,8 @@ public class Api extends Entity
 	private final Set<String> deniedUsers = new HashSet<>();
 	private final AtomicInteger concurrency = new AtomicInteger(-1);
 	private final AtomicInteger active = new AtomicInteger(0);
+	private final ReentrantLock concurrencyLock = new ReentrantLock();
+	private final Condition concurrencyAvailable = concurrencyLock.newCondition();
 	
 	private void securityCheck(Data data, User.Type user)
 	{
@@ -87,11 +89,11 @@ public class Api extends Entity
 	/**
 	 * @hidden
 	 */
-	public final Endpoint.Rest.Type api() { return api; }
+	public final aeonics.http.Endpoint.Rest.Type api() { return api; }
 	/**
 	 * @hidden
 	 */
-	public final Endpoint.Template apitemplate() { return template; }
+	public final aeonics.http.Endpoint.Template apitemplate() { return template; }
 	
 	/**
 	 * Creates a new API endpoint with the provided path and method
@@ -113,17 +115,17 @@ public class Api extends Entity
 		
 		// set the entity category
 		initialize(StringUtils.toLowerCase(Api.class), StringUtils.toLowerCase(Api.class), null, true);
-		template = new Endpoint.Rest() { }
+		template = new aeonics.http.Endpoint.Rest() { }
 			.template();
-		Factory.of(Endpoint.class).remove(template.type());
+		Factory.of(aeonics.http.Endpoint.class).remove(template.type());
 		
 		api = template.create()
-			.<Endpoint.Rest.Type>cast()
+			.<aeonics.http.Endpoint.Rest.Type>cast()
 			.before(this::securityCheck)
 			.url(path)
 			.method(method);
 		api.internal(false);
-		Registry.of(Endpoint.class).remove(api);
+		Registry.of(aeonics.http.Endpoint.class).remove(api);
 		Registry.add(this);
 	}
 	
@@ -207,7 +209,7 @@ public class Api extends Entity
 		if( !url.startsWith(Manager.of(Config.class).get(Api.class, "prefix").asString()) )
 			throw new HttpException(404);
 		
-		Endpoint.Rest.Type endpoint = Registry.of(Endpoint.class).get(e -> e.matchesMethod(method) && e.matchesPath(url));
+		aeonics.http.Endpoint.Rest.Type endpoint = Registry.of(aeonics.http.Endpoint.class).get(e -> e.matchesMethod(method) && e.matchesPath(url));
 		if( endpoint == null ) throw new HttpException(404);
 		
 		return endpoint.process(new Message(url)
@@ -260,13 +262,15 @@ public class Api extends Entity
 			try
 			{
 				State.api.set(api().id());
-				synchronized (this)
+				concurrencyLock.lock();
+				try
 				{
-		            while (concurrency.get() > 0 && active.get() >= concurrency.get())
-		                wait();
-		            active.incrementAndGet();
-		        }
-			
+					while (concurrency.get() > 0 && active.get() >= concurrency.get())
+						concurrencyAvailable.await();
+					active.incrementAndGet();
+				}
+				finally { concurrencyLock.unlock(); }
+
 	            return handler.apply(data, user);
 	        }
 			catch(HttpException he)
@@ -281,11 +285,13 @@ public class Api extends Entity
 			finally
 			{
 				State.api.set(null);
-	            synchronized (this)
-	            {
-	            	active.decrementAndGet();
-	                notifyAll();
-	            }
+				concurrencyLock.lock();
+				try
+				{
+					active.decrementAndGet();
+					concurrencyAvailable.signalAll();
+				}
+				finally { concurrencyLock.unlock(); }
 	        }
 		};
 		
@@ -545,7 +551,7 @@ public class Api extends Entity
 	 */
 	public static void metrics(String name)
 	{
-		Manager.of(Monitor.class).add("Uniqorn", "Api", Monitor.UNSPECIFIED, name, 0);
+		Manager.of(Monitor.class).add("uniqorn", "custom", Monitor.UNSPECIFIED, name, 0);
 	}
 	
 	/**
@@ -555,7 +561,7 @@ public class Api extends Entity
 	 */
 	public static void metrics(String name, long value)
 	{
-		Manager.of(Monitor.class).add("Uniqorn", "Api", Monitor.UNSPECIFIED, name, value);
+		Manager.of(Monitor.class).add("uniqorn", "custom", Monitor.UNSPECIFIED, name, value);
 	}
 	
 	/**

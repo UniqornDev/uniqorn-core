@@ -46,7 +46,7 @@ public class Input
 		return data != null && StringUtils.isFloatingPoint(data.asString()) && !data.asString().startsWith("-");
 	};
 	
-	public static final Predicate<Data> isNagative = (data) ->
+	public static final Predicate<Data> isNegative = (data) ->
 	{
 		return data != null && StringUtils.isFloatingPoint(data.asString()) && data.asString().startsWith("-");
 	};

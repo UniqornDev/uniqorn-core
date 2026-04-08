@@ -23,6 +23,9 @@ public class Workspace extends Item<Workspace.Type>
 		@Override
 		public final String category() { return StringUtils.toLowerCase(Workspace.class); }
 		
+		public SnapshotMode snapshotMode() { return SnapshotMode.NONE; }
+		public boolean internal() { return false; }
+		
 		public void close()
 		{
 			// delete cascade

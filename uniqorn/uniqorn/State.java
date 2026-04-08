@@ -18,7 +18,7 @@ public class State
 	
 	static
 	{
-		Manager.of(Timeout.class).watch(new Tracker<Void>(null)
+		Manager.of(Timeout.class).watch(new Tracker<Void>("Uniqorn State Timeout Tracker")
 		{
 			private final int max = 60_000; // 1min
 			public long delay()
