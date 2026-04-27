@@ -27,15 +27,9 @@ available. Non-critical updates may be included in scheduled releases.
 
 ## Software Bill of Materials (SBOM)
 
-This SBOM is maintained manually and updated as necessary. It outlines the 
+The SBOM is provided in the `bom.json` file in CycloneDX format. It outlines the 
 dependencies and libraries used in the development of this framework, helping 
 users understand potential security implications.
-
-### Dependencies
-
-- Java Runtime Environment 11+
-- Compatible Operating System
-- Aeonics framework
 
 ---
 

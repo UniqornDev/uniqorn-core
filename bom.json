@@ -1,0 +1,70 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-01-01T00:00:00Z",
+    "component": {
+      "type": "library",
+      "bom-ref": "uniqorn",
+      "name": "uniqorn",
+      "version": "1.0.0",
+      "description": "Uniqorn Core",
+      "supplier": {
+        "name": "Aeonics SRL",
+        "url": [ "https://uniqorn.dev" ]
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    "manufacturer": {
+      "name": "Aeonics SRL",
+      "url": [ "https://uniqorn.dev" ]
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "aeonics-core",
+      "name": "aeonics-core",
+      "version": "1.0.0",
+      "description": "Aeonics Core System",
+      "scope": "required"
+    },
+	{
+      "type": "library",
+      "bom-ref": "aeonics-http",
+      "name": "aeonics-http",
+      "version": "1.0.0",
+      "description": "Aeonics HTTP Transport",
+      "scope": "required"
+    },
+	{
+      "type": "library",
+      "bom-ref": "aeonics-git",
+      "name": "aeonics-git",
+      "version": "1.0.0",
+      "description": "Aeonics GIT Server",
+      "scope": "required"
+    },
+	{
+      "type": "library",
+      "bom-ref": "aeonics-mcp",
+      "name": "aeonics-mcp",
+      "version": "1.0.0",
+      "description": "Aeonics MCP Server",
+      "scope": "required"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "uniqorn",
+      "dependsOn": [ "aeonics-core", "aeonics-http", "aeonics-git", "aeonics-mcp" ]
+    }
+  ]
+}
