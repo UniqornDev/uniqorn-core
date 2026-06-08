@@ -16,7 +16,6 @@ public class Pgsql extends Database
 			{
 				data = data.get("parameters");
 				
-				entity.parameter("size", 10);
 				entity.parameter("driver", "org.postgresql.Driver");
 				entity.parameter("jdbc", "jdbc:postgresql://" + data.asString("host") + ":" + data.asString("port") + "/" + data.asString("database")
 					+ "?tcpKeepAlive=true");
@@ -35,7 +34,6 @@ public class Pgsql extends Database
 	public Template<? extends Database.Type> template()
 	{
 		return super.template()
-			.removeParameter("size")
 			.removeParameter("driver")
 			.removeParameter("jdbc")
 			.add(new Parameter("port")

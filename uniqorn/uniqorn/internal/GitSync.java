@@ -192,7 +192,7 @@ public class GitSync
 					}
 					catch(HttpException he)
 					{
-						if( he.code == 413 && he.data != null && he.data.isMap() && he.data.isMap("error") && !he.data.get("error").isEmpty("message") )
+						if( he.code == 422 && he.data != null && he.data.isMap() && he.data.isMap("error") && !he.data.get("error").isEmpty("message") )
 						{
 							out.append("[@Uniqorn] " + Data.map().put("file", change.a).put("uri", null).put("status", "error").put("error", he.data.get("error").asString("message")).put("info", null) + "\n");
 							human.append(change.a + " - " + he.data.get("error").asString("message").replaceAll("\n", " ") + "\n");
@@ -269,7 +269,7 @@ public class GitSync
 				}
 				catch(HttpException he)
 				{
-					if( he.code == 413 && he.data != null && he.data.isMap() && he.data.isMap("error") && !he.data.get("error").isEmpty("message") )
+					if( he.code == 422 && he.data != null && he.data.isMap() && he.data.isMap("error") && !he.data.get("error").isEmpty("message") )
 					{
 						out.append("[@Uniqorn] " + Data.map().put("file", change.a).put("uri", null).put("status", "error").put("error", he.data.get("error").asString("message")).put("info", null) + "\n");
 						human.append(change.a + " - " + he.data.get("error").asString("message").replaceAll("\n", " ") + "\n");

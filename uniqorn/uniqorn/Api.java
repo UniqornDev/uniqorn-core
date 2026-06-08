@@ -103,15 +103,15 @@ public class Api extends Entity
 	public Api(String path, String method)
 	{
 		if( path == null )
-			throw new HttpException(413, "The api URI is invalid");
+			throw new HttpException(422, "The api URI is invalid");
 		
 		// normalize the path
 		path = "/" + Storage.normalize(path).replace('\\', '/');
 		if( path.isBlank() || path.length() <= 1 )
-			throw new HttpException(413, "The api URI is invalid");
+			throw new HttpException(422, "The api URI is invalid");
 		
 		if( method == null || method.isBlank() )
-			throw new HttpException(413, "The api method is invalid");
+			throw new HttpException(422, "The api method is invalid");
 		
 		// set the entity category
 		initialize(StringUtils.toLowerCase(Api.class), StringUtils.toLowerCase(Api.class), null, true);
@@ -209,7 +209,7 @@ public class Api extends Entity
 		if( !url.startsWith(Manager.of(Config.class).get(Api.class, "prefix").asString()) )
 			throw new HttpException(404);
 		
-		aeonics.http.Endpoint.Rest.Type endpoint = Registry.of(aeonics.http.Endpoint.class).get(e -> e.matchesMethod(method) && e.matchesPath(url));
+		aeonics.http.Endpoint.Type endpoint = Registry.of(aeonics.http.Endpoint.class).get(e -> e.matchesMethod(method) && e.matchesPath(url));
 		if( endpoint == null ) throw new HttpException(404);
 		
 		return endpoint.process(new Message(url)
@@ -227,7 +227,7 @@ public class Api extends Entity
 	 */
 	public Api process(Supplier<Object> handler)
 	{
-		if( handler == null ) throw new HttpException(413, "The endpoint process function is not valid");
+		if( handler == null ) throw new HttpException(422, "The endpoint process function is not valid");
 		process((data, user) -> handler.get());
 		return this;
 	}
@@ -241,7 +241,7 @@ public class Api extends Entity
 	 */
 	public Api process(Function<Data, Object> handler)
 	{
-		if( handler == null ) throw new HttpException(413, "The endpoint process function is not valid");
+		if( handler == null ) throw new HttpException(422, "The endpoint process function is not valid");
 		process((data, user) -> handler.apply(data));
 		return this;
 	}
@@ -255,7 +255,7 @@ public class Api extends Entity
 	 */
 	public Api process(BiFunction<Data, User.Type, Object> handler)
 	{
-		if( handler == null ) throw new HttpException(413, "The endpoint process function is not valid");
+		if( handler == null ) throw new HttpException(422, "The endpoint process function is not valid");
 		
 		final BiFunction<Data, User.Type, Object> wrapper = (data, user) ->
 		{
@@ -445,7 +445,7 @@ public class Api extends Entity
 	 */
 	public Api parameter(String name, String description, Predicate<Data> validator)
 	{
-		if( name == null || name.isBlank() ) throw new HttpException(413, "The parameter name is empty");
+		if( name == null || name.isBlank() ) throw new HttpException(422, "The parameter name is empty");
 		
 		Parameter p = new Parameter(name).optional(true).description(description);
 		if( validator != null )

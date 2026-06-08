@@ -29,6 +29,34 @@
   },
   "components": [
     {
+      "type": "platform",
+      "bom-ref": "jre",
+      "name": "Java Runtime Environment",
+      "versionRange": "vers:java/>=11",
+      "description": "Java Runtime Environment, any distribution (OpenJDK, Oracle, etc.)",
+      "scope": "required",
+	  "isExternal": true
+    },
+	{
+      "type": "framework",
+      "bom-ref": "aeonics",
+      "name": "aeonics",
+      "version": "1.0.0",
+      "description": "Aeonics application framework for Java",
+      "scope": "required",
+      "supplier": {
+        "name": "Aeonics SRL",
+        "url": [ "https://aeonics.io" ]
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "Aeonics Source Available License (ASAL)"
+          }
+        }
+      ]
+    },
+	{
       "type": "library",
       "bom-ref": "aeonics-core",
       "name": "aeonics-core",
@@ -63,6 +91,26 @@
   ],
   "dependencies": [
     {
+      "ref": "aeonics",
+      "dependsOn": [ "jre" ]
+    },
+	{
+      "ref": "aeonics-core",
+      "dependsOn": [ "aeonics" ]
+    },
+	{
+      "ref": "aeonics-http",
+      "dependsOn": [ "aeonics-core" ]
+    },
+	{
+      "ref": "aeonics-git",
+      "dependsOn": [ "aeonics-core", "aeonics-http" ]
+    },
+	{
+      "ref": "aeonics-mcp",
+      "dependsOn": [ "aeonics-core", "aeonics-http" ]
+    },
+	{
       "ref": "uniqorn",
       "dependsOn": [ "aeonics-core", "aeonics-http", "aeonics-git", "aeonics-mcp" ]
     }

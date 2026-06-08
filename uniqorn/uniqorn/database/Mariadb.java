@@ -16,7 +16,6 @@ public class Mariadb extends Database
 			{
 				data = data.get("parameters");
 				
-				entity.parameter("size", 10);
 				entity.parameter("driver", "org.mariadb.jdbc.Driver");
 				entity.parameter("jdbc", "jdbc:mariadb://" + data.asString("host") + ":" + data.asString("port") + "/" + data.asString("database")
 					+ (data.asBool("ssl") ? "?sslMode=trust" : ""));
@@ -35,7 +34,6 @@ public class Mariadb extends Database
 	public Template<? extends Database.Type> template()
 	{
 		return super.template()
-			.removeParameter("size")
 			.removeParameter("driver")
 			.removeParameter("jdbc")
 			.add(new Parameter("port")

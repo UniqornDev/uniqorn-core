@@ -16,9 +16,12 @@ public class Sqlite extends Database
 			{
 				data = data.get("parameters");
 				
+				String path = data.asString("path");
+				if( path.indexOf('?') < 0 ) path += "?foreign_keys=on&journal_mode=WAL&synchronous=NORMAL&busy_timeout=5000";
+				
 				entity.parameter("size", 10);
 				entity.parameter("driver", "org.sqlite.JDBC");
-				entity.parameter("jdbc", "jdbc:sqlite:" + data.asString("path"));
+				entity.parameter("jdbc", "jdbc:sqlite:" + path);
 				
 				entity.<Database.Type>cast().refreshPoolSize();
 			});
