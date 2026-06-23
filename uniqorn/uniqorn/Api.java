@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -41,6 +42,7 @@ public class Api extends Entity
 	private final Set<String> deniedGroups = new HashSet<>();
 	private final Set<String> deniedUsers = new HashSet<>();
 	private final AtomicInteger concurrency = new AtomicInteger(-1);
+	private final AtomicLong concurrencyWait = new AtomicLong(-1);
 	private final AtomicInteger active = new AtomicInteger(0);
 	private final ReentrantLock concurrencyLock = new ReentrantLock();
 	private final Condition concurrencyAvailable = concurrencyLock.newCondition();
@@ -278,15 +280,39 @@ public class Api extends Entity
 		
 		final BiFunction<Data, User.Type, Object> wrapper = (data, user) ->
 		{
+			// the caller's context, restored when this endpoint returns
+			final String previousApi = State.api.get();
+			final User.Type previousUser = State.user.get();
+			// true once this request has taken a concurrency slot that must be released on the way out
+			boolean acquired = false;
 			try
 			{
 				State.api.set(api().id());
+				State.user.set(user);
 				concurrencyLock.lock();
 				try
 				{
+					long maxWait = concurrencyWait.get();
+					long deadline = maxWait >= 0 ? System.nanoTime() + maxWait * 1_000_000L : 0;
 					while (concurrency.get() > 0 && active.get() >= concurrency.get())
-						concurrencyAvailable.await();
+					{
+						if (maxWait < 0)
+							concurrencyAvailable.await();
+						else
+						{
+							long remaining = deadline - System.nanoTime();
+							if (remaining <= 0)
+								throw new HttpException(503, "The endpoint is busy, please retry later");
+							concurrencyAvailable.awaitNanos(remaining);
+						}
+					}
 					active.incrementAndGet();
+					acquired = true;
+				}
+				catch (InterruptedException e)
+				{
+					// turn the interrupt into a 503 for this request without restoring the thread interrupt flag
+					throw new HttpException(503, "The request was interrupted while waiting for a free slot");
 				}
 				finally { concurrencyLock.unlock(); }
 
@@ -303,14 +329,18 @@ public class Api extends Entity
 			}
 			finally
 			{
-				State.api.set(null);
-				concurrencyLock.lock();
-				try
+				State.api.set(previousApi);
+				State.user.set(previousUser);
+				if( acquired )
 				{
-					active.decrementAndGet();
-					concurrencyAvailable.signalAll();
+					concurrencyLock.lock();
+					try
+					{
+						active.decrementAndGet();
+						concurrencyAvailable.signalAll();
+					}
+					finally { concurrencyLock.unlock(); }
 				}
-				finally { concurrencyLock.unlock(); }
 	        }
 		};
 		
@@ -479,20 +509,44 @@ public class Api extends Entity
 	}
 	
 	/**
-	 * Sets the maximum concurrency level for this endpoint
+	 * Sets the maximum number of requests this endpoint serves at once. Requests over the limit
+	 * wait indefinitely for a running one to finish before they start; the order in which waiting
+	 * requests are admitted is not guaranteed.
 	 * @param level the concurrency level
 	 * @return this
 	 */
 	public Api concurrency(int level)
 	{
+		return concurrency(level, -1);
+	}
+
+	/**
+	 * Sets the maximum number of requests this endpoint serves at once, and how long a waiting
+	 * request holds for a free slot. A request that does not obtain a slot within
+	 * {@code maxWaitMillis} fails with HTTP 503 instead of waiting further.
+	 * @param level the concurrency level
+	 * @param maxWaitMillis the longest a request waits for a free slot, in milliseconds, or a negative value to wait indefinitely
+	 * @return this
+	 */
+	public Api concurrency(int level, long maxWaitMillis)
+	{
 		concurrency.set(level);
+		concurrencyWait.set(maxWaitMillis);
 		return this;
 	}
 	
+	// a single instance-wide lock shared by every endpoint; one atomic() block blocks every
+	// other atomic() call on the instance
 	private static final ReentrantLock atomicLock = new ReentrantLock();
-	
+
 	/**
-	 * Executes the specified function atomically, blocking other concurrent requests in the mean time
+	 * Executes the specified function atomically against a single instance-wide lock.
+	 * <p>
+	 * The lock is shared by <em>every</em> endpoint on this instance, not just this one: while a
+	 * block runs, all other {@code atomic()} calls anywhere on the instance wait their turn. This
+	 * is deliberate, so the block can safely read and write state that is itself shared across
+	 * endpoints (such as {@link State} values or a storage). Because it
+	 * serialises the whole instance, keep the block as short as possible and avoid slow I/O inside it.
 	 * @param operation the function to run
 	 * @throws Exception if anything happens
 	 */
@@ -504,10 +558,16 @@ public class Api extends Entity
 	}
 	
 	/**
-	 * Executes the specified function atomically, blocking other concurrent requests in the mean time
+	 * Executes the specified function atomically against a single instance-wide lock and returns its result.
+	 * <p>
+	 * The lock is shared by <em>every</em> endpoint on this instance, not just this one: while a
+	 * block runs, all other {@code atomic()} calls anywhere on the instance wait their turn. This
+	 * is deliberate, so the block can safely read and write state that is itself shared across
+	 * endpoints (such as {@link State} values or a storage). Because it
+	 * serialises the whole instance, keep the block as short as possible and avoid slow I/O inside it.
 	 * @param <T> the function return type
 	 * @param operation the function to run and get the response
-	 * @return this
+	 * @return the value returned by {@code operation}
 	 * @throws Exception if anything happens
 	 */
 	public static <T> T atomic(Supplier<T> operation) throws Exception
