@@ -100,7 +100,7 @@ public class Router extends aeonics.http.Endpoint
 				}
 				throw new HttpException(404);
 			}
-			catch(Exception e)
+			catch(Throwable e)
 			{
 				if( e instanceof HttpException )
 					code = ((HttpException)e).code;

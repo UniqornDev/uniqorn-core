@@ -1,9 +1,13 @@
 package local;
 
 import aeonics.Plugin;
+import aeonics.manager.Config;
 import aeonics.manager.Lifecycle;
 import aeonics.manager.Lifecycle.Phase;
+import aeonics.manager.Manager;
 import aeonics.template.Factory;
+import aeonics.template.Parameter;
+import uniqorn.Api;
 import uniqorn.Endpoint;
 import uniqorn.Router;
 import uniqorn.Workspace;
@@ -31,5 +35,10 @@ public class Main extends Plugin
 		Factory.add(new uniqorn.database.Mariadb());
 		Factory.add(new uniqorn.database.Pgsql());
 		Factory.add(new uniqorn.database.Sqlite());
+
+		Manager.of(Config.class).declare(Api.class, new Parameter("policy")
+			.summary("Compilation policy")
+			.description("The id of the policy that inspects the classes referenced by deployed endpoint code. When set, endpoint deployments are compiled under that policy and rejected if it refuses a referenced class.")
+			.format(Parameter.Format.TEXT));
 	}
 }

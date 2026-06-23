@@ -2,8 +2,6 @@ package uniqorn;
 
 import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -143,10 +141,14 @@ public class Endpoint extends Item<Endpoint.Type>
 
 			// we need to strip the package declaration and prefix the imports
 			String sanitizedCode = IMPORTS + PACKAGE.matcher(code).replaceFirst("");
+			Data request = Data.map().put("code", sanitizedCode);
+			// apply the compilation policy configured for this instance, if any
+			String policy = Manager.of(Config.class).get(Api.class, "policy").asString();
+			if( policy != null && !policy.isBlank() ) request.put("policy", policy);
 			Data result = null;
 			try
 			{
-				result = jit.<aeonics.http.Endpoint.Rest.Type>cast().process(Data.map().put("code", sanitizedCode));
+				result = jit.<aeonics.http.Endpoint.Rest.Type>cast().process(request);
 			}
 			catch(HttpException e)
 			{
@@ -159,28 +161,19 @@ public class Endpoint extends Item<Endpoint.Type>
 
 			// ======================
 			// THEN SUBSTITUTE API
+			// carry the previous compiled endpoint id onto the freshly recompiled one
+			String previousApiId = ( api != null && api.api() != null ) ? api.api().id() : null;
 			if( api != null )
 				Registry.of(StringUtils.toLowerCase(Api.class)).remove(api.id());
 			api = Registry.of(StringUtils.toLowerCase(Api.class)).get(id);
+			if( previousApiId != null && api != null && api.api() != null )
+				api.api().id(previousApiId);
 
 			// ======================
 			// THEN CLEANUP THE DYNAMIC
 			Registry.of("aeonics.jit.dynamic").remove(result.asString("id"));
 
 			Manager.of(Logger.class).config(Api.class, "Deploy success for {} deployed as {}", valueOf("path").asString(), fullPath());
-		}
-
-		/**
-		 * Performs a sanity check on the code and throws an exception if it does not pass.
-		 * @param code the code
-		 * @throws HttpException if the code does not pass validation
-		 */
-		public static void checkCode(String code)
-		{
-			// sanity code check
-			for( String word : FORBIDDEN )
-				if( code.contains(word) )
-					throw new HttpException(400, "Use of restricted language features: " + word);
 		}
 
 		/**
@@ -216,17 +209,6 @@ public class Endpoint extends Item<Endpoint.Type>
 		public static final String IMPORTS = "import uniqorn.*; import aeonics.data.*; import aeonics.util.*; import java.util.*; import aeonics.entity.*; "
 			+ "import aeonics.template.*; import aeonics.util.Functions.*; import java.util.concurrent.atomic.*; "
 			+ "import aeonics.entity.security.*; ";
-
-		public static final List<String> FORBIDDEN = Arrays.asList(
-			"reflect", "Method", "Field", "Constructor", "Modifier", "AccessibleObject", "InvocationHandler", "Proxy", "Class", "ClassLoader", "Unsafe", "ServiceLoader", "Module", "com.sun", "Native", "JNI", "MXBean", "SecurityManager", "Permission", "InitialContext", "JNDI", "RMI", "AccessController", "Instrumentation", "MethodHandle", "jdk",
-			"Runtime", "Shutdown", "ShutdownHook", "ProcessBuilder", "ProcessHandle", "System",
-			"File", "Files", "Path", "Paths", "FileSystem", "RandomAccessFile", "Console", "InputStream", "OutputStream",
-			"Thread", "ThreadLocal", "Executor", "Executors", "Callable", "Future", "ForkJoinPool", "Semaphore", "Mutex", "ReentrantLock", "Lock", "Condition", "CyclicBarrier", "CountDownLatch",
-			"Socket", "Datagram", "Multicast", "Channel", "URL", "URI",
-			"ScriptEngine", "Interpreter", "GroovyShell", "JavaScript", "JavaCompiler", "ToolProvider", "FileManager",
-			"Serializable", "Externalizable", "readObject", "writeObject", "resolveClass",
-			"goto", "invoke", "eval",
-			".jit", "Registry", "Factory", "Manager", ".manager", "Item", "Entity", "Template");
 
 		public static final Pattern PACKAGE = Pattern.compile("\\bpackage[\\w\\.\\s]*;", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	}
