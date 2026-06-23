@@ -11,9 +11,22 @@ import aeonics.manager.Timeout;
 import aeonics.manager.Timeout.Tracker;
 import aeonics.util.Tuples.Tuple;
 
+/**
+ * Holds transient in-memory key/value state for endpoints.
+ * <p>
+ * {@link #local(String) Local} state is scoped to a single endpoint; {@link #global(String) global}
+ * state is shared by every endpoint on the instance. Either kind can be bound to a specific
+ * {@link User} and given a time-to-live after which it expires. All state lives in memory only and
+ * is lost when the instance restarts.
+ * <p>
+ * Stored values are returned auto-cast to the type the caller expects; reading a value as a type it
+ * was not stored as throws a {@link ClassCastException}.
+ */
 public class State
 {
 	static ThreadLocal<String> api = ThreadLocal.withInitial(() -> null);
+	// the user currently being served on this thread
+	static ThreadLocal<User.Type> user = ThreadLocal.withInitial(() -> null);
 	private static ConcurrentHashMap<String, Tuple<Object, Long>> store = new ConcurrentHashMap<>();
 	
 	static
@@ -52,7 +65,21 @@ public class State
 		else return (T) value.a;
 	}
 	
+	/**
+	 * Retrieves a value from the calling endpoint's local state.
+	 * @param <T> the expected value type
+	 * @param key the state entry name
+	 * @return the stored value, or {@code null} if it is absent or has expired
+	 */
 	public static <T> T local(String key) { return local(key, (User.Type) null); }
+
+	/**
+	 * Retrieves a user-bound value from the calling endpoint's local state.
+	 * @param <T> the expected value type
+	 * @param key the state entry name
+	 * @param user the user the value was stored for, or {@code null} for the entry bound to no user
+	 * @return the stored value, or {@code null} if it is absent or has expired
+	 */
 	public static <T> T local(String key, User.Type user)
 	{
 		if( key == null ) key = "";
@@ -60,7 +87,21 @@ public class State
 		return get(api.get() + ":" + key);
 	}
 	
+	/**
+	 * Retrieves a value from the global state shared by all endpoints.
+	 * @param <T> the expected value type
+	 * @param key the state entry name
+	 * @return the stored value, or {@code null} if it is absent or has expired
+	 */
 	public static <T> T global(String key) { return global(key, (User.Type) null); }
+
+	/**
+	 * Retrieves a user-bound value from the global state shared by all endpoints.
+	 * @param <T> the expected value type
+	 * @param key the state entry name
+	 * @param user the user the value was stored for, or {@code null} for the entry bound to no user
+	 * @return the stored value, or {@code null} if it is absent or has expired
+	 */
 	public static <T> T global(String key, User.Type user)
 	{
 		if( key == null ) key = "";
@@ -77,9 +118,44 @@ public class State
 		else return (T) previous.a;
 	}
 	
+	/**
+	 * Stores a value in the calling endpoint's local state.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param value the value to store
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T local(String key, Object value) { return local(key, null, value, -1); }
+
+	/**
+	 * Stores a value in the calling endpoint's local state with an expiration.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param value the value to store
+	 * @param ttl the time-to-live in milliseconds after which the value expires, or a non-positive value to never expire
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T local(String key, Object value, long ttl) { return local(key, null, value, ttl); }
+
+	/**
+	 * Stores a user-bound value in the calling endpoint's local state.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param user the user to bind the value to, or {@code null} to bind it to no user
+	 * @param value the value to store
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T local(String key, User.Type user, Object value) { return local(key, user, value, -1); }
+
+	/**
+	 * Stores a user-bound value in the calling endpoint's local state with an expiration.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param user the user to bind the value to, or {@code null} to bind it to no user
+	 * @param value the value to store
+	 * @param ttl the time-to-live in milliseconds after which the value expires, or a non-positive value to never expire
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T local(String key, User.Type user, Object value, long ttl)
 	{
 		if( key == null ) key = "";
@@ -87,9 +163,44 @@ public class State
 		return set(api.get() + ":" + key, value, ttl);
 	}
 	
+	/**
+	 * Stores a value in the global state shared by all endpoints.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param value the value to store
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T global(String key, Object value) { return global(key, null, value, -1); }
+
+	/**
+	 * Stores a value in the global state shared by all endpoints with an expiration.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param value the value to store
+	 * @param ttl the time-to-live in milliseconds after which the value expires, or a non-positive value to never expire
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T global(String key, Object value, long ttl) { return global(key, null, value, ttl); }
+
+	/**
+	 * Stores a user-bound value in the global state shared by all endpoints.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param user the user to bind the value to, or {@code null} to bind it to no user
+	 * @param value the value to store
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T global(String key, User.Type user, Object value) { return global(key, user, value, -1); }
+
+	/**
+	 * Stores a user-bound value in the global state shared by all endpoints with an expiration.
+	 * @param <T> the previous value type
+	 * @param key the state entry name
+	 * @param user the user to bind the value to, or {@code null} to bind it to no user
+	 * @param value the value to store
+	 * @param ttl the time-to-live in milliseconds after which the value expires, or a non-positive value to never expire
+	 * @return the previous value, or {@code null} if there was none
+	 */
 	public static <T> T global(String key, User.Type user, Object value, long ttl)
 	{
 		if( key == null ) key = "";
