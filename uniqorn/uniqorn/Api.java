@@ -169,38 +169,57 @@ public class Api extends Entity
 	}
 
 	/**
-	 * Call another endpoint using the GET method
+	 * Call another endpoint using the GET method, preserving the current caller's identity.
+	 * <p>
+	 * The chained endpoint runs as the same user who called this one, so its RBAC is enforced just
+	 * as if that user had reached it directly. To run as a different user (for example
+	 * {@link User#SYSTEM} to escalate, or {@link User#ANONYMOUS} to drop privileges), use
+	 * {@link #chain(String, String, Data, User.Type)}.
 	 * @param url the other endpoint path
 	 * @return the other endpoint response
 	 * @throws Exception in case of error
 	 */
-	public static Data chain(String url) throws Exception { return chain(url, "GET", Data.map(), User.SYSTEM); }
-	
+	public static Data chain(String url) throws Exception { return chain(url, "GET", Data.map(), State.user.get()); }
+
 	/**
-	 * Call another endpoint
+	 * Call another endpoint, preserving the current caller's identity.
+	 * <p>
+	 * The chained endpoint runs as the same user who called this one, so its RBAC is enforced just
+	 * as if that user had reached it directly. To run as a different user (for example
+	 * {@link User#SYSTEM} to escalate, or {@link User#ANONYMOUS} to drop privileges), use
+	 * {@link #chain(String, String, Data, User.Type)}.
 	 * @param url the other endpoint path
 	 * @param method the HTTP method
 	 * @return the other endpoint response
 	 * @throws Exception in case of error
 	 */
-	public static Data chain(String url, String method) throws Exception { return chain(url, method, Data.map(), User.SYSTEM); }
-	
+	public static Data chain(String url, String method) throws Exception { return chain(url, method, Data.map(), State.user.get()); }
+
 	/**
-	 * Call another endpoint
+	 * Call another endpoint, preserving the current caller's identity.
+	 * <p>
+	 * The chained endpoint runs as the same user who called this one, so its RBAC is enforced just
+	 * as if that user had reached it directly. To run as a different user (for example
+	 * {@link User#SYSTEM} to escalate, or {@link User#ANONYMOUS} to drop privileges), use
+	 * {@link #chain(String, String, Data, User.Type)}.
 	 * @param url the other endpoint path
 	 * @param method the HTTP method
 	 * @param data the parameters
 	 * @return the other endpoint response
 	 * @throws Exception in case of error
 	 */
-	public static Data chain(String url, String method, Data data) throws Exception { return chain(url, method, data, User.SYSTEM); }
-	
+	public static Data chain(String url, String method, Data data) throws Exception { return chain(url, method, data, State.user.get()); }
+
 	/**
-	 * Call another endpoint
+	 * Call another endpoint as the given user.
+	 * <p>
+	 * The chained endpoint's RBAC is enforced against {@code user}. Passing {@link User#SYSTEM}
+	 * bypasses every access check, so only do so deliberately; to keep the caller's permissions use
+	 * one of the overloads without a user argument, which preserve the current caller's identity.
 	 * @param url the other endpoint path
 	 * @param method the HTTP method
 	 * @param data the parameters
-	 * @param user the authenticated user
+	 * @param user the user to run the chained endpoint as ({@link User#SYSTEM} bypasses all access checks)
 	 * @return the other endpoint response
 	 * @throws Exception in case of error
 	 */
