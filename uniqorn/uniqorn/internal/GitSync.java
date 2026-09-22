@@ -376,6 +376,10 @@ public class GitSync
 					workspace.addRelation("endpoints", endpoint);
 					endpoint.updateHead();
 				}
+				catch(HttpException ex)
+				{
+					Manager.of(Logger.class).warning(Endpoint.class, "Recompile of {} failed with {}", path, ex.data);
+				}
 				catch(Exception e)
 				{
 					Manager.of(Logger.class).warning(Endpoint.class, "Recompile of {} failed with {}", path, e);
